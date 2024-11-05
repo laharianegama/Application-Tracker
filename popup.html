@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Job Applications Tracker</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      li {
+        margin-bottom: 10px;
+      }
+      .counter {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Tracked Job Applications</h3>
+    <div class="counter">
+      Applications Submitted: <span id="totalCount">0</span>
+    </div>
+    <ul id="applicationsList"></ul>
+    <script src="popup.js"></script>
+  </body>
+</html>

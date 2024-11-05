@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Job Application Tracker",
+  "version": "1.0",
+  "description": "Tracks clicks on 'Submit Application' buttons on job sites.",
+  "permissions": ["storage", "tabs"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/extensionIcon.png",
+      "48": "assets/extensionIcon.png",
+      "128": "assets/extensionIcon.png"
+    }
+  }
+}
