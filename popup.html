@@ -14,10 +14,17 @@
       <button id="setTarget">Set Target</button>
     </div>
 
-    <!-- Application Counter Section -->
-    <div class="counter">
-      Applications Submitted: <span id="totalCount">0</span>
+    <!-- Application Counter with Circular Progress Bar -->
+    <div class="progress-circle">
+      <svg>
+        <circle class="background-circle" r="54" cx="60" cy="60"></circle>
+        <circle class="progress-circle-fill" r="54" cx="60" cy="60"></circle>
+      </svg>
+      <div class="counter">
+        Applications Submitted: <span id="totalCount">0</span>
+      </div>
     </div>
+
     <ul id="applicationsList"></ul>
 
     <script src="popup.js"></script>

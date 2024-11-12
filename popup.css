@@ -9,9 +9,9 @@ li {
   margin-bottom: 10px;
 }
 .counter {
-  font-size: 1.5em;
+  font-size: 1.2em;
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-top: 5px;
   text-align: center;
 }
 .target-setting {
@@ -27,4 +27,35 @@ li {
 .target-setting button {
   padding: 5px 10px;
   cursor: pointer;
+}
+
+.progress-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+.progress-circle svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.progress-circle circle {
+  fill: none;
+  stroke-width: 10;
+}
+
+.background-circle {
+  stroke: #e6e6e6;
+}
+
+.progress-circle-fill {
+  stroke: #4688f1; /* Progress color */
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
 }

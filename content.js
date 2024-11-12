@@ -26,7 +26,13 @@ function trackApplicationButtonClick() {
       console.log("Found a button with matching text:", buttonText);
       button.addEventListener("click", () => {
         console.log("Application submit button clicked");
-        chrome.runtime.sendMessage({ type: "application_submit" });
+
+        // Attempt to send a message to the background script
+        try {
+          chrome.runtime.sendMessage({ type: "application_submit" });
+        } catch (error) {
+          console.error("Failed to send message to background script:", error);
+        }
       });
     }
   });
