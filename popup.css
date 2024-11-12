@@ -1,0 +1,30 @@
+body {
+  font-family: Arial, sans-serif;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  margin-bottom: 10px;
+}
+.counter {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
+}
+.target-setting {
+  text-align: center;
+  margin-bottom: 15px;
+}
+.target-setting input {
+  width: 60px;
+  margin-left: 5px;
+  margin-right: 10px;
+  padding: 5px;
+}
+.target-setting button {
+  padding: 5px 10px;
+  cursor: pointer;
+}

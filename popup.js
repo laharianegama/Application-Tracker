@@ -3,6 +3,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const applicationsList = document.getElementById("applicationsList");
   const totalCount = document.getElementById("totalCount");
+  const dailyTargetInput = document.getElementById("dailyTarget");
+  const setTargetButton = document.getElementById("setTarget");
 
   // Fetch stored applications and display them
   chrome.storage.sync.get(["applications"], (data) => {
@@ -20,6 +22,25 @@ document.addEventListener("DOMContentLoaded", () => {
         listItem.textContent = `URL: ${app.url} | Time: ${app.timestamp}`;
         applicationsList.appendChild(listItem);
       });
+    }
+  });
+
+  // Load and display the saved daily target on load
+  chrome.storage.sync.get(["dailyTarget"], (data) => {
+    if (data.dailyTarget) {
+      dailyTargetInput.value = data.dailyTarget;
+    }
+  });
+
+  // Save daily target when the button is clicked
+  setTargetButton.addEventListener("click", () => {
+    const dailyTarget = parseInt(dailyTargetInput.value);
+    if (!isNaN(dailyTarget) && dailyTarget > 0) {
+      chrome.storage.sync.set({ dailyTarget }, () => {
+        alert(`Daily target set to ${dailyTarget}`);
+      });
+    } else {
+      alert("Please enter a valid target number.");
     }
   });
 });
