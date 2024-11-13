@@ -18,7 +18,7 @@ function trackApplicationButtonClick() {
   console.log("Detected buttons:", buttons);
 
   buttons.forEach((button) => {
-    const buttonText = button.innerText || button.value; // For <button> and <input type="submit">
+    const buttonText = button.innerText || button.value;
 
     if (
       applicationButtonKeywords.some((keyword) => buttonText.includes(keyword))
@@ -27,12 +27,10 @@ function trackApplicationButtonClick() {
       button.addEventListener("click", () => {
         console.log("Application submit button clicked");
 
-        // Attempt to send a message to the background script
-        try {
-          chrome.runtime.sendMessage({ type: "application_submit" });
-        } catch (error) {
-          console.error("Failed to send message to background script:", error);
-        }
+        // Send a message to the background script to handle storage
+        chrome.runtime.sendMessage({ type: "application_submit" }, () => {
+          console.log("Sent application_submit message to background script.");
+        });
       });
     }
   });
@@ -40,5 +38,3 @@ function trackApplicationButtonClick() {
 
 // Run the function after the page loads
 window.addEventListener("load", trackApplicationButtonClick);
-
-// // Define common phrases for job application buttons
