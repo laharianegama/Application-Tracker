@@ -27,9 +27,9 @@ function trackApplicationButtonClick() {
       button.addEventListener("click", () => {
         console.log("Application submit button clicked");
 
-        // Send a message to the background script to handle storage
-        chrome.runtime.sendMessage({ type: "application_submit" }, () => {
-          console.log("Sent application_submit message to background script.");
+        // Update storage instead of sending a message
+        chrome.storage.sync.set({ applicationSubmitted: true }, () => {
+          console.log("Set applicationSubmitted flag in storage.");
         });
       });
     }

@@ -1,6 +1,7 @@
 // background.js
 console.log("Background script loaded.");
 
+// Function to handle application submission logic
 function handleApplicationSubmission() {
   chrome.storage.sync.get(["applications"], (data) => {
     const applications = data.applications || [];
@@ -10,7 +11,7 @@ function handleApplicationSubmission() {
     };
     applications.push(applicationData);
 
-    // Save the updated applications array
+    // Save the updated applications array and reset the flag
     chrome.storage.sync.set(
       { applications, applicationSubmitted: false },
       () => {
@@ -26,9 +27,13 @@ function handleApplicationSubmission() {
   });
 }
 
-// Listen for messages from content.js to trigger application submission handling
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "application_submit") {
+// Listen for changes in chrome.storage to detect application submissions
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (
+    area === "sync" &&
+    changes.applicationSubmitted &&
+    changes.applicationSubmitted.newValue === true
+  ) {
     handleApplicationSubmission();
   }
 });
