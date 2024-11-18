@@ -1,7 +1,7 @@
 // background.js
 console.log("Background script loaded.");
 
-// Function to handle application submission logic
+// Function to handle application submission
 function handleApplicationSubmission() {
   chrome.storage.sync.get(["applications"], (data) => {
     const applications = data.applications || [];
@@ -11,17 +11,23 @@ function handleApplicationSubmission() {
     };
     applications.push(applicationData);
 
-    // Save the updated applications array and reset the flag
     chrome.storage.sync.set(
       { applications, applicationSubmitted: false },
       () => {
-        console.log(
-          "Application recorded and applicationSubmitted flag reset."
-        );
+        if (chrome.runtime.lastError) {
+          console.error(
+            "Error setting applications data:",
+            chrome.runtime.lastError.message
+          );
+        } else {
+          console.log(
+            "Application recorded and applicationSubmitted flag reset."
+          );
 
-        // Update the badge with the count of applications
-        const count = applications.length;
-        chrome.action.setBadgeText({ text: count.toString() });
+          // Update the badge with the count of applications
+          const count = applications.length;
+          chrome.action.setBadgeText({ text: count.toString() });
+        }
       }
     );
   });

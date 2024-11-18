@@ -1,40 +1,56 @@
-// content.js
+(() => {
+  console.log("Content script loaded");
 
-console.log("Content script loaded");
+  const applicationButtonKeywords = [
+    "Submit Application",
+    "Apply Now",
+    "Submit",
+    "Send Application",
+    "Apply",
+    "Finish Application",
+    "Submit your application",
+  ];
 
-// Define common phrases for job application buttons
-const applicationButtonKeywords = [
-  "Submit Application",
-  "Apply Now",
-  "Submit",
-  "Send Application",
-  "Apply",
-  "Finish Application",
-];
+  // Function to monitor button clicks
+  function trackApplicationButtonClick() {
+    const buttons = document.querySelectorAll("button, input[type='submit']");
+    console.log("Detected buttons:", buttons);
 
-// Function to monitor button clicks
-function trackApplicationButtonClick() {
-  const buttons = document.querySelectorAll("button, input[type='submit']");
-  console.log("Detected buttons:", buttons);
+    buttons.forEach((button) => {
+      const buttonText = button.innerText || button.value || "";
+      const nestedSpanText = button.querySelector("span")?.innerText || "";
 
-  buttons.forEach((button) => {
-    const buttonText = button.innerText || button.value;
+      if (
+        applicationButtonKeywords.some(
+          (keyword) =>
+            buttonText.includes(keyword) || nestedSpanText.includes(keyword)
+        )
+      ) {
+        console.log("Found a button with matching text:", buttonText);
 
-    if (
-      applicationButtonKeywords.some((keyword) => buttonText.includes(keyword))
-    ) {
-      console.log("Found a button with matching text:", buttonText);
-      button.addEventListener("click", () => {
-        console.log("Application submit button clicked");
+        button.addEventListener("click", () => {
+          console.log("Application submit button clicked");
 
-        // Update storage instead of sending a message
-        chrome.storage.sync.set({ applicationSubmitted: true }, () => {
-          console.log("Set applicationSubmitted flag in storage.");
+          // Attempt to update storage with error handling
+          try {
+            chrome.storage.sync.set({ applicationSubmitted: true }, () => {
+              if (chrome.runtime.lastError) {
+                console.error(
+                  "Error setting applicationSubmitted flag:",
+                  chrome.runtime.lastError.message
+                );
+              } else {
+                console.log("Set applicationSubmitted flag in storage.");
+              }
+            });
+          } catch (error) {
+            console.error("Failed to set applicationSubmitted flag:", error);
+          }
         });
-      });
-    }
-  });
-}
+      }
+    });
+  }
 
-// Run the function after the page loads
-window.addEventListener("load", trackApplicationButtonClick);
+  // Run the function after the page loads
+  window.addEventListener("load", trackApplicationButtonClick);
+})();

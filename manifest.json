@@ -3,7 +3,7 @@
   "name": "Job Application Tracker",
   "version": "1.0",
   "description": "Tracks clicks on 'Submit Application' buttons on job sites.",
-  "permissions": ["storage", "tabs"],
+  "permissions": ["storage", "tabs", "scripting", "activeTab"],
   "background": {
     "service_worker": "background.js"
   },
@@ -11,7 +11,8 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
