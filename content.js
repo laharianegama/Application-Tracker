@@ -1,5 +1,5 @@
 (() => {
-  console.log("Content script loaded");
+  console.log("Content script loaded, this tracks itself- no user input");
 
   const applicationButtonKeywords = [
     "Submit Application",
