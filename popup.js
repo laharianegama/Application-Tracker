@@ -11,10 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let applicationCount = 0;
   let dailyTarget = 10;
 
-  // Helper function to update the progress
   function updateProgress() {
     const progress = Math.min(applicationCount / dailyTarget, 1);
-    const circumference = 2 * Math.PI * 40; // Radius of 40
+    const circumference = 2 * Math.PI * 40; // Circle radius: 40
     progressCircleFill.style.strokeDasharray = circumference;
     progressCircleFill.style.strokeDashoffset = circumference * (1 - progress);
 
@@ -29,36 +28,29 @@ document.addEventListener("DOMContentLoaded", () => {
       motivationalText.textContent =
         "Let's get started! Apply for your first job today.";
     }
+
+    // Update the badge on the extension icon
+    chrome.action.setBadgeText({ text: applicationCount.toString() });
   }
 
-  // Increment application count
   incrementButton.addEventListener("click", () => {
     applicationCount++;
-    chrome.storage.sync.set({ applications: applicationCount }, () => {
-      updateProgress();
-    });
+    chrome.storage.sync.set({ applications: applicationCount }, updateProgress);
   });
 
-  // Reset application count
   resetButton.addEventListener("click", () => {
     applicationCount = 0;
-    chrome.storage.sync.set({ applications: applicationCount }, () => {
-      updateProgress();
-    });
+    chrome.storage.sync.set({ applications: applicationCount }, updateProgress);
   });
 
-  // Set daily target
   setTargetButton.addEventListener("click", () => {
     const newTarget = parseInt(dailyTargetInput.value);
     if (newTarget > 0) {
       dailyTarget = newTarget;
-      chrome.storage.sync.set({ dailyTarget: dailyTarget }, () => {
-        updateProgress();
-      });
+      chrome.storage.sync.set({ dailyTarget }, updateProgress);
     }
   });
 
-  // Initialize progress from storage
   chrome.storage.sync.get(["applications", "dailyTarget"], (data) => {
     applicationCount = data.applications || 0;
     dailyTarget = data.dailyTarget || 10;

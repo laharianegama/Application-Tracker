@@ -1,25 +1,27 @@
 body {
   font-family: Arial, sans-serif;
   margin: 0;
-  padding: 20px;
+  padding: 10px;
   background: #f4f4f9;
   text-align: center;
 }
 
 .popup-container {
-  max-width: 400px;
+  max-width: 300px;
   margin: auto;
 }
 
 h1 {
+  font-size: 18px; /* Reduced font size */
   color: #333;
+  margin: 5px 0;
 }
 
 .progress-circle {
   position: relative;
-  width: 120px;
-  height: 120px;
-  margin: 20px auto;
+  width: 100px; /* Smaller circle */
+  height: 100px;
+  margin: 10px auto; /* Reduced margin */
 }
 
 .progress-circle svg {
@@ -47,17 +49,18 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 1.5rem;
+  font-size: 1.2rem; /* Smaller font size */
   color: #333;
 }
 
 .controls button {
-  margin: 10px;
-  padding: 10px 20px;
-  font-size: 1rem;
+  margin: 5px;
+  padding: 8px 15px;
+  font-size: 14px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 #incrementButton {
@@ -71,13 +74,16 @@ h1 {
 }
 
 .settings {
-  margin-top: 20px;
+  margin-top: 15px;
+  display: flex; /* Align input and button horizontally */
+  justify-content: center; /* Center them horizontally */
+  align-items: center; /* Align vertically */
+  gap: 5px; /* Add spacing between the input and button */
 }
 
 .settings input {
-  margin: 5px;
   padding: 5px;
-  width: 50px;
+  width: 60px; /* Adjusted width for better alignment */
 }
 
 .settings button {
