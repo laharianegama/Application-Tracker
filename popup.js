@@ -1,61 +1,67 @@
-function updateProgress(applicationCount, dailyTarget) {
-  const progressCircle = document.querySelector(".progress-circle-fill");
-  const radius = 30;
-  const circumference = 2 * Math.PI * radius;
-
-  if (dailyTarget > 0) {
-    const progress = Math.min(applicationCount / dailyTarget, 1); // Cap at 100%
-    const offset = circumference * (1 - progress);
-    progressCircle.style.strokeDasharray = circumference;
-    progressCircle.style.strokeDashoffset = offset;
-  } else {
-    progressCircle.style.strokeDashoffset = circumference;
-  }
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-  const applicationsList = document.getElementById("applicationsList");
-  const totalCount = document.getElementById("totalCount");
-  const dailyTargetInput = document.getElementById("dailyTarget");
+  const progressCount = document.getElementById("progressCount");
   const dailyTargetDisplay = document.getElementById("dailyTargetDisplay");
+  const motivationalText = document.getElementById("motivationalText");
+  const incrementButton = document.getElementById("incrementButton");
+  const resetButton = document.getElementById("resetButton");
+  const dailyTargetInput = document.getElementById("dailyTarget");
   const setTargetButton = document.getElementById("setTarget");
+  const progressCircleFill = document.querySelector(".progress-circle-fill");
 
-  // Fetch stored applications and display them
-  chrome.storage.sync.get(["applications", "dailyTarget"], (data) => {
-    console.log("Data retrieved from storage:", data);
-    const applications = data.applications || [];
-    const applicationCount = applications.length;
-    const dailyTarget = data.dailyTarget || 0;
+  let applicationCount = 0;
+  let dailyTarget = 10;
 
-    // Update the counts in the popup
-    totalCount.textContent = applicationCount;
+  // Helper function to update the progress
+  function updateProgress() {
+    const progress = Math.min(applicationCount / dailyTarget, 1);
+    const circumference = 2 * Math.PI * 40; // Radius of 40
+    progressCircleFill.style.strokeDasharray = circumference;
+    progressCircleFill.style.strokeDashoffset = circumference * (1 - progress);
+
+    progressCount.textContent = applicationCount;
     dailyTargetDisplay.textContent = dailyTarget;
-    dailyTargetInput.value = dailyTarget;
 
-    // Update the progress bar
-    updateProgress(applicationCount, dailyTarget);
-
-    if (applications.length === 0) {
-      applicationsList.innerHTML = "<li>No applications tracked yet.</li>";
+    if (applicationCount >= dailyTarget) {
+      motivationalText.textContent = "Goal achieved! 🎉";
+    } else if (applicationCount > 0) {
+      motivationalText.textContent = "Keep going! You're doing great!";
     } else {
-      applicationsList.innerHTML = "";
-      applications.forEach((app) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = `URL: ${app.url} | Time: ${app.timestamp}`;
-        applicationsList.appendChild(listItem);
+      motivationalText.textContent =
+        "Let's get started! Apply for your first job today.";
+    }
+  }
+
+  // Increment application count
+  incrementButton.addEventListener("click", () => {
+    applicationCount++;
+    chrome.storage.sync.set({ applications: applicationCount }, () => {
+      updateProgress();
+    });
+  });
+
+  // Reset application count
+  resetButton.addEventListener("click", () => {
+    applicationCount = 0;
+    chrome.storage.sync.set({ applications: applicationCount }, () => {
+      updateProgress();
+    });
+  });
+
+  // Set daily target
+  setTargetButton.addEventListener("click", () => {
+    const newTarget = parseInt(dailyTargetInput.value);
+    if (newTarget > 0) {
+      dailyTarget = newTarget;
+      chrome.storage.sync.set({ dailyTarget: dailyTarget }, () => {
+        updateProgress();
       });
     }
   });
 
-  setTargetButton.addEventListener("click", () => {
-    const dailyTarget = parseInt(dailyTargetInput.value);
-    if (!isNaN(dailyTarget) && dailyTarget > 0) {
-      chrome.storage.sync.set({ dailyTarget }, () => {
-        dailyTargetDisplay.textContent = dailyTarget;
-        alert(`Daily target set to ${dailyTarget}`);
-      });
-    } else {
-      alert("Please enter a valid target number.");
-    }
+  // Initialize progress from storage
+  chrome.storage.sync.get(["applications", "dailyTarget"], (data) => {
+    applicationCount = data.applications || 0;
+    dailyTarget = data.dailyTarget || 10;
+    updateProgress();
   });
 });

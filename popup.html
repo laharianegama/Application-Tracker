@@ -1,31 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Job Applications Tracker</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="popup.css" />
+    <title>Job Application Tracker</title>
   </head>
   <body>
-    <h3>Tracked Job Applications</h3>
+    <div class="popup-container">
+      <h1>Application Tracker</h1>
 
-    <!-- Target Setting Section -->
-    <div class="target-setting">
-      <label for="dailyTarget">Set Daily Target:</label>
-      <input type="number" id="dailyTarget" min="1" placeholder="e.g., 10" />
-      <button id="setTarget">Set Target</button>
-    </div>
+      <!-- Circular Progress Bar -->
+      <div class="progress-circle">
+        <svg>
+          <circle class="background-circle" r="40" cx="50" cy="50"></circle>
+          <circle class="progress-circle-fill" r="40" cx="50" cy="50"></circle>
+        </svg>
+        <div class="progress-text">
+          <span id="progressCount">0</span>/<span id="dailyTargetDisplay"
+            >10</span
+          >
+        </div>
+      </div>
 
-    <!-- Circular Progress Bar and Application Counter -->
-    <div class="progress-circle">
-      <svg>
-        <circle class="background-circle" r="30" cx="35" cy="35"></circle>
-        <circle class="progress-circle-fill" r="30" cx="35" cy="35"></circle>
-      </svg>
-      <div class="counter">
-        <span id="totalCount">0</span>/<span id="dailyTargetDisplay">0</span>
+      <!-- Motivational Text -->
+      <p id="motivationalText">
+        Let's get started! Apply for your first job today.
+      </p>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button id="incrementButton">+ Add Application</button>
+        <button id="resetButton" class="reset">Reset</button>
+      </div>
+
+      <!-- Settings -->
+      <div class="settings">
+        <label for="dailyTarget">Set Daily Target:</label>
+        <input type="number" id="dailyTarget" min="1" placeholder="e.g., 10" />
+        <button id="setTarget">Set</button>
       </div>
     </div>
-
-    <ul id="applicationsList"></ul>
 
     <script src="popup.js"></script>
   </body>
