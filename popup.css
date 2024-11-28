@@ -15,13 +15,14 @@ h1 {
   font-size: 18px;
   color: #333;
   margin: 5px 0;
+  font-weight: bold;
 }
 
 .progress-circle {
   position: relative;
   width: 100px;
   height: 100px;
-  margin: 10px auto;
+  margin: 15px auto;
 }
 
 .progress-circle svg {
@@ -41,16 +42,69 @@ h1 {
   stroke: #4caf50;
   stroke-width: 8;
   stroke-linecap: round;
-  transition: stroke-dashoffset 0.5s;
+  transition: stroke-dashoffset 0.5s, stroke 0.3s;
+}
+
+.progress-circle-glow {
+  fill: none;
+  stroke: rgba(76, 175, 80, 0.3);
+  stroke-width: 8;
+  stroke-linecap: round;
+  filter: blur(4px);
+  display: none;
 }
 
 .progress-text {
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 1.2rem;
   color: #333;
+  font-weight: bold;
+}
+
+.progress-label {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.achievement-stars {
+  height: 24px;
+  margin: 10px 0;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s ease;
+}
+
+.achievement-stars.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.quote-container {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.daily-quote {
+  font-size: 12px;
+  color: #555;
+  font-style: italic;
+  margin: 5px 0;
+}
+
+.quote-author {
+  font-size: 11px;
+  color: #888;
+  margin: 0;
 }
 
 .stats-container {
@@ -59,12 +113,17 @@ h1 {
 
 .stats-box {
   background: white;
-  padding: 8px;
+  padding: 12px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.stats-box:hover {
+  transform: translateY(-2px);
 }
 
 .stats-label {
@@ -73,7 +132,7 @@ h1 {
 }
 
 .stats-value {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: bold;
   color: #333;
 }
@@ -85,17 +144,27 @@ h1 {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 #incrementButton {
   background: #4caf50;
   color: white;
+  transform-origin: center;
+}
+
+#incrementButton:hover {
+  background: #45a049;
+  transform: scale(1.05);
 }
 
 .reset {
   background: #f44336;
   color: white;
+}
+
+.reset:hover {
+  background: #e53935;
 }
 
 .settings {
@@ -109,19 +178,26 @@ h1 {
 .settings input {
   padding: 5px;
   width: 60px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .settings button {
   padding: 5px 10px;
+  background: #666;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .streak-container {
   margin: 10px 0;
   font-size: 14px;
   color: #555;
+  font-weight: bold;
 }
 
-/* Animation for progress updates */
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -134,6 +210,119 @@ h1 {
   }
 }
 
+@keyframes celebrate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2) rotate(10deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .progress-update {
   animation: pulse 0.5s ease;
+}
+
+.goal-achieved {
+  animation: celebrate 0.8s ease;
+}
+
+.progress-near-complete .progress-circle-fill {
+  stroke: #ffd700;
+}
+
+.progress-complete .progress-circle-fill {
+  stroke: #4caf50;
+}
+
+.progress-complete .progress-circle-glow {
+  display: block;
+}
+
+/* Add these new styles to your existing CSS */
+
+/* Gradient background for the popup */
+body {
+  background: linear-gradient(145deg, #f4f4f9 0%, #ffffff 100%);
+}
+
+/* Enhanced progress circle */
+.progress-circle::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background: linear-gradient(
+    145deg,
+    rgba(76, 175, 80, 0.1),
+    rgba(76, 175, 80, 0)
+  );
+  z-index: -1;
+}
+
+/* Confetti container */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Enhanced button styles */
+#incrementButton {
+  background: linear-gradient(145deg, #4caf50, #45a049);
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+}
+
+#incrementButton:hover {
+  background: linear-gradient(145deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* Enhanced stats box */
+.stats-box {
+  background: linear-gradient(145deg, #ffffff, #f8f8f8);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Improved typography */
+.progress-text {
+  font-family: "Arial", sans-serif;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.daily-quote {
+  line-height: 1.4;
+  letter-spacing: 0.2px;
+}
+
+/* Achievement animation */
+@keyframes achievementPop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.achievement-unlocked {
+  animation: achievementPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }

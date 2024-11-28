@@ -10,17 +10,25 @@
     <div class="popup-container">
       <h1>Application Tracker</h1>
 
-      <!-- Circular Progress Bar -->
+      <!-- Enhanced Progress Circle -->
       <div class="progress-circle">
         <svg>
           <circle class="background-circle" r="40" cx="50" cy="50"></circle>
           <circle class="progress-circle-fill" r="40" cx="50" cy="50"></circle>
+          <circle class="progress-circle-glow" r="40" cx="50" cy="50"></circle>
         </svg>
         <div class="progress-text">
           <span id="progressCount">0</span>/<span id="dailyTargetDisplay"
             >10</span
           >
         </div>
+        <div class="progress-label" id="progressLabel">Start applying!</div>
+      </div>
+
+      <!-- Daily Quote -->
+      <div class="quote-container">
+        <p id="dailyQuote" class="daily-quote"></p>
+        <p id="quoteAuthor" class="quote-author"></p>
       </div>
 
       <!-- Total Applications Stats -->
@@ -31,14 +39,9 @@
         </div>
       </div>
 
-      <!-- Motivational Text -->
-      <p id="motivationalText">
-        Let's get started! Apply for your first job today.
-      </p>
-
       <!-- Streak Display -->
       <div class="streak-container">
-        <p id="streakText">You're on a 0-day streak!</p>
+        <p id="streakText">You're on a 0-day streak! 🔥</p>
       </div>
 
       <!-- Controls -->
@@ -53,8 +56,8 @@
         <input type="number" id="dailyTarget" min="1" placeholder="10" />
         <button id="setTarget">Set</button>
       </div>
-
-      <script src="popup.js"></script>
     </div>
+    <script src="popup.js"></script>
+    <script src="confetti.js"></script>
   </body>
 </html>
