@@ -8,11 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const dailyTargetInput = document.getElementById("dailyTarget");
   const setTargetButton = document.getElementById("setTarget");
   const progressCircleFill = document.querySelector(".progress-circle-fill");
+  const totalApplicationsDisplay = document.getElementById("totalApplications");
 
   let applicationCount = 0;
   let dailyTarget = 10;
   let streak = 0;
   let lastUpdatedDate = null;
+  let totalApplications = 0;
 
   function updateProgress() {
     const progress = Math.min(applicationCount / dailyTarget, 1);
@@ -20,8 +22,14 @@ document.addEventListener("DOMContentLoaded", () => {
     progressCircleFill.style.strokeDasharray = circumference;
     progressCircleFill.style.strokeDashoffset = circumference * (1 - progress);
 
+    // Add animation class
+    const progressElement = document.querySelector(".progress-circle");
+    progressElement.classList.add("progress-update");
+    setTimeout(() => progressElement.classList.remove("progress-update"), 500);
+
     progressCount.textContent = applicationCount;
     dailyTargetDisplay.textContent = dailyTarget;
+    totalApplicationsDisplay.textContent = totalApplications;
 
     // Motivational messages
     if (applicationCount >= dailyTarget) {
@@ -33,13 +41,25 @@ document.addEventListener("DOMContentLoaded", () => {
         "Let's get started! Apply for your first job today.";
     }
 
-    // Update streak
+    // Update streak with proper handling of missed days
     const today = new Date().toISOString().split("T")[0];
-    if (applicationCount >= dailyTarget && lastUpdatedDate !== today) {
-      streak++;
+    const yesterday = new Date(Date.now() - 86400000)
+      .toISOString()
+      .split("T")[0];
+
+    if (applicationCount >= dailyTarget) {
+      if (lastUpdatedDate === yesterday) {
+        streak++;
+      } else if (lastUpdatedDate !== today) {
+        streak = 1;
+      }
       lastUpdatedDate = today;
       chrome.storage.sync.set({ streak, lastUpdatedDate });
+    } else if (lastUpdatedDate !== today && lastUpdatedDate !== yesterday) {
+      streak = 0;
+      chrome.storage.sync.set({ streak, lastUpdatedDate });
     }
+
     streakText.textContent = `You're on a ${streak}-day streak!`;
 
     // Update badge on the extension icon
@@ -48,7 +68,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   incrementButton.addEventListener("click", () => {
     applicationCount++;
-    chrome.storage.sync.set({ applications: applicationCount }, updateProgress);
+    totalApplications++;
+    chrome.storage.sync.set(
+      {
+        applications: applicationCount,
+        totalApplications: totalApplications,
+      },
+      updateProgress
+    );
   });
 
   resetButton.addEventListener("click", () => {
@@ -66,12 +93,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize progress from storage
   chrome.storage.sync.get(
-    ["applications", "dailyTarget", "streak", "lastUpdatedDate"],
+    [
+      "applications",
+      "dailyTarget",
+      "streak",
+      "lastUpdatedDate",
+      "totalApplications",
+    ],
     (data) => {
       applicationCount = data.applications || 0;
       dailyTarget = data.dailyTarget || 10;
       streak = data.streak || 0;
       lastUpdatedDate = data.lastUpdatedDate || null;
+      totalApplications = data.totalApplications || 0;
       updateProgress();
     }
   );

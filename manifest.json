@@ -3,7 +3,7 @@
   "name": "Job Application Tracker",
   "version": "1.0",
   "description": "Manually track job applications and monitor your progress toward daily goals.",
-  "permissions": ["storage"],
+  "permissions": ["storage", "activeTab", "scripting"],
   "background": {
     "service_worker": "background.js"
   },
