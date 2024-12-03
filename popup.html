@@ -56,6 +56,22 @@
         <input type="number" id="dailyTarget" min="1" placeholder="10" />
         <button id="setTarget">Set</button>
       </div>
+
+      <button id="openNotesBtn" class="notes-button">📝 Notes</button>
+
+      <!--  notes modal -->
+      <div id="notesModal" class="notes-modal">
+        <div class="notes-content">
+          <textarea
+            id="notesText"
+            placeholder="Enter your notes here!!"
+          ></textarea>
+          <div class="notes-actions">
+            <button id="saveNotesBtn">Save</button>
+            <button id="closeNotesBtn">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
     <script src="popup.js"></script>
     <script src="confetti.js"></script>

@@ -12,6 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const dailyQuote = document.getElementById("dailyQuote");
   const quoteAuthor = document.getElementById("quoteAuthor");
 
+  // Add these lines at the beginning of your existing popup.js file
+  const openNotesBtn = document.getElementById("openNotesBtn");
+  const notesModal = document.getElementById("notesModal");
+  const notesText = document.getElementById("notesText");
+  const saveNotesBtn = document.getElementById("saveNotesBtn");
+  const closeNotesBtn = document.getElementById("closeNotesBtn");
+
   let applicationCount = 0;
   let dailyTarget = 10;
   let streak = 0;
@@ -134,6 +141,15 @@ document.addEventListener("DOMContentLoaded", () => {
     quoteAuthor.textContent = `- ${author}`;
   }
 
+  // Add this function to load existing notes
+  function loadNotes() {
+    chrome.storage.sync.get(["notes"], (data) => {
+      if (data.notes) {
+        notesText.value = data.notes;
+      }
+    });
+  }
+
   incrementButton.addEventListener("click", () => {
     applicationCount++;
     totalApplications++;
@@ -164,6 +180,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  openNotesBtn.addEventListener("click", () => {
+    notesModal.style.display = "block";
+    loadNotes();
+  });
+
+  saveNotesBtn.addEventListener("click", () => {
+    const notes = notesText.value;
+    chrome.storage.sync.set({ notes }, () => {
+      console.log("Notes saved");
+      notesModal.style.display = "none";
+    });
+  });
+
+  closeNotesBtn.addEventListener("click", () => {
+    notesModal.style.display = "none";
+  });
+
+  // Close the modal if the user clicks outside of it
+  window.addEventListener("click", (event) => {
+    if (event.target === notesModal) {
+      notesModal.style.display = "none";
+    }
+  });
+
   // Initialize progress from storage
   chrome.storage.sync.get(
     [
@@ -181,6 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
       totalApplications = data.totalApplications || 0;
       updateProgress();
       updateDailyQuote();
+      loadNotes();
     }
   );
 });

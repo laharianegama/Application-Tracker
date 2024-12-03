@@ -326,3 +326,84 @@ body {
 .achievement-unlocked {
   animation: achievementPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
+/* Add these styles to your existing popup.css file */
+
+.notes-button {
+  margin-top: 10px;
+  padding: 8px 15px;
+  font-size: 14px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.notes-button:hover {
+  background-color: #45a049;
+}
+
+.notes-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.notes-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  border-radius: 5px;
+}
+
+#notesText {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.notes-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.notes-actions button {
+  padding: 5px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#saveNotesBtn {
+  background-color: #4caf50;
+  color: white;
+}
+
+#saveNotesBtn:hover {
+  background-color: #45a049;
+}
+
+#closeNotesBtn {
+  background-color: #f44336;
+  color: white;
+}
+
+#closeNotesBtn:hover {
+  background-color: #d32f2f;
+}
