@@ -1,28 +1,45 @@
 body {
   font-family: Arial, sans-serif;
   margin: 0;
-  padding: 10px;
-  background: #f4f4f9;
+  padding: 12px;
+  background: linear-gradient(145deg, #f4f4f9 0%, #ffffff 100%);
   text-align: center;
+  width: 400px;
 }
 
 .popup-container {
-  max-width: 500px;
   margin: auto;
 }
 
 h1 {
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
-  margin: 5px 0;
+  margin: 0 0 12px 0;
   font-weight: bold;
+}
+
+.main-content {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.left-section {
+  flex: 0 0 auto;
+}
+
+.right-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .progress-circle {
   position: relative;
   width: 100px;
   height: 100px;
-  margin: 15px auto;
+  margin: 0 auto 12px;
 }
 
 .progress-circle svg {
@@ -73,24 +90,11 @@ h1 {
   color: #666;
 }
 
-.achievement-stars {
-  height: 24px;
-  margin: 10px 0;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.3s ease;
-}
-
-.achievement-stars.show {
-  opacity: 1;
-  transform: scale(1);
-}
-
 .quote-container {
   background: white;
   padding: 8px;
   border-radius: 8px;
-  margin: 6px 0;
+  margin-bottom: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
@@ -98,7 +102,9 @@ h1 {
   font-size: 12px;
   color: #555;
   font-style: italic;
-  margin: 5px 0;
+  margin: 4px 0;
+  line-height: 1.4;
+  letter-spacing: 0.2px;
 }
 
 .quote-author {
@@ -107,40 +113,53 @@ h1 {
   margin: 0;
 }
 
-.stats-container {
-  margin: 10px 0;
+.stats-streak-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .stats-box {
-  background: white;
-  padding: 12px;
+  background: linear-gradient(145deg, #ffffff, #f8f8f8);
+  padding: 8px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: transform 0.2s ease;
-}
-
-.stats-box:hover {
-  transform: translateY(-2px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .stats-label {
   font-size: 12px;
   color: #666;
+  display: block;
 }
 
 .stats-value {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   color: #333;
+  display: block;
+}
+
+.streak-container {
+  font-size: 13px;
+  color: #555;
+  font-weight: bold;
+  margin: 0;
+}
+
+.streak-container p {
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
 }
 
 .controls button {
-  margin: 5px;
-  padding: 8px 15px;
-  font-size: 14px;
+  padding: 8px 12px;
+  font-size: 13px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -148,14 +167,15 @@ h1 {
 }
 
 #incrementButton {
-  background: #4caf50;
+  background: linear-gradient(145deg, #4caf50, #45a049);
   color: white;
-  transform-origin: center;
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
 }
 
 #incrementButton:hover {
-  background: #45a049;
-  transform: scale(1.05);
+  background: linear-gradient(145deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
 }
 
 .reset {
@@ -167,23 +187,31 @@ h1 {
   background: #e53935;
 }
 
-.settings {
-  margin-top: 15px;
+.bottom-controls {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 5px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.settings {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
 }
 
 .settings input {
-  padding: 5px;
-  width: 60px;
+  padding: 4px;
+  width: 50px;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
 .settings button {
-  padding: 5px 10px;
+  padding: 4px 8px;
   background: #666;
   color: white;
   border: none;
@@ -191,11 +219,82 @@ h1 {
   cursor: pointer;
 }
 
-.streak-container {
-  margin: 10px 0;
-  font-size: 14px;
-  color: #555;
-  font-weight: bold;
+.notes-button {
+  padding: 6px 6px;
+  font-size: 13px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.notes-button:hover {
+  background-color: #45a049;
+}
+
+.notes-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.notes-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 16px;
+  border: 1px solid #888;
+  width: 90%;
+  border-radius: 5px;
+}
+
+#notesText {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.notes-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.notes-actions button {
+  padding: 6px 12px;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#saveNotesBtn {
+  background-color: #4caf50;
+  color: white;
+}
+
+#saveNotesBtn:hover {
+  background-color: #45a049;
+}
+
+#closeNotesBtn {
+  background-color: #f44336;
+  color: white;
+}
+
+#closeNotesBtn:hover {
+  background-color: #d32f2f;
 }
 
 @keyframes pulse {
@@ -242,71 +341,6 @@ h1 {
   display: block;
 }
 
-/* Add these new styles to your existing CSS */
-
-/* Gradient background for the popup */
-body {
-  background: linear-gradient(145deg, #f4f4f9 0%, #ffffff 100%);
-}
-
-/* Enhanced progress circle */
-.progress-circle::before {
-  content: "";
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border-radius: 50%;
-  background: linear-gradient(
-    145deg,
-    rgba(76, 175, 80, 0.1),
-    rgba(76, 175, 80, 0)
-  );
-  z-index: -1;
-}
-
-/* Confetti container */
-.confetti-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* Enhanced button styles */
-#incrementButton {
-  background: linear-gradient(145deg, #4caf50, #45a049);
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
-}
-
-#incrementButton:hover {
-  background: linear-gradient(145deg, #45a049, #3d8b40);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
-}
-
-/* Enhanced stats box */
-.stats-box {
-  background: linear-gradient(145deg, #ffffff, #f8f8f8);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-/* Improved typography */
-.progress-text {
-  font-family: "Arial", sans-serif;
-  font-weight: 700;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.daily-quote {
-  line-height: 1.4;
-  letter-spacing: 0.2px;
-}
-
 /* Achievement animation */
 @keyframes achievementPop {
   0% {
@@ -327,83 +361,19 @@ body {
   animation: achievementPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Add these styles to your existing popup.css file */
-
-.notes-button {
-  margin-top: 10px;
-  padding: 8px 15px;
-  font-size: 14px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.notes-button:hover {
-  background-color: #45a049;
-}
-
-.notes-modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.notes-content {
-  background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-  border-radius: 5px;
-}
-
-#notesText {
-  width: 100%;
-  height: 100px;
-  margin-bottom: 10px;
-  padding: 5px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-.notes-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 6px;
-}
-
-.notes-actions button {
-  padding: 5px 10px;
-  font-size: 14px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#saveNotesBtn {
-  background-color: #4caf50;
-  color: white;
-}
-
-#saveNotesBtn:hover {
-  background-color: #45a049;
-}
-
-#closeNotesBtn {
-  background-color: #f44336;
-  color: white;
-}
-
-#closeNotesBtn:hover {
-  background-color: #d32f2f;
+/* Enhanced progress circle */
+.progress-circle::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background: linear-gradient(
+    145deg,
+    rgba(76, 175, 80, 0.1),
+    rgba(76, 175, 80, 0)
+  );
+  z-index: -1;
 }

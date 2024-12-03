@@ -10,61 +10,76 @@
     <div class="popup-container">
       <h1>Application Tracker</h1>
 
-      <!-- Enhanced Progress Circle -->
-      <div class="progress-circle">
-        <svg>
-          <circle class="background-circle" r="40" cx="50" cy="50"></circle>
-          <circle class="progress-circle-fill" r="40" cx="50" cy="50"></circle>
-          <circle class="progress-circle-glow" r="40" cx="50" cy="50"></circle>
-        </svg>
-        <div class="progress-text">
-          <span id="progressCount">0</span>/<span id="dailyTargetDisplay"
-            >10</span
-          >
+      <div class="main-content">
+        <div class="left-section">
+          <!-- Progress Circle -->
+          <div class="progress-circle">
+            <svg>
+              <circle class="background-circle" r="40" cx="50" cy="50"></circle>
+              <circle
+                class="progress-circle-fill"
+                r="40"
+                cx="50"
+                cy="50"
+              ></circle>
+              <circle
+                class="progress-circle-glow"
+                r="40"
+                cx="50"
+                cy="50"
+              ></circle>
+            </svg>
+            <div class="progress-text">
+              <span id="progressCount">0</span>/<span id="dailyTargetDisplay"
+                >10</span
+              >
+            </div>
+            <div class="progress-label" id="progressLabel">Start applying!</div>
+          </div>
+
+          <!-- Controls -->
+          <div class="controls">
+            <button id="incrementButton">+ Add Application</button>
+            <button id="resetButton" class="reset">Reset</button>
+          </div>
         </div>
-        <div class="progress-label" id="progressLabel">Start applying!</div>
-      </div>
 
-      <!-- Daily Quote -->
-      <div class="quote-container">
-        <p id="dailyQuote" class="daily-quote"></p>
-        <p id="quoteAuthor" class="quote-author"></p>
-      </div>
+        <div class="right-section">
+          <!-- Quote Container -->
+          <div class="quote-container">
+            <p id="dailyQuote" class="daily-quote"></p>
+            <p id="quoteAuthor" class="quote-author"></p>
+          </div>
 
-      <!-- Total Applications Stats -->
-      <div class="stats-container">
-        <div class="stats-box">
-          <span class="stats-label">Total Applications</span>
-          <span class="stats-value" id="totalApplications">0</span>
+          <!-- Stats and Streak -->
+          <div class="stats-streak-container">
+            <div class="stats-box">
+              <span class="stats-label">Total Applications</span>
+              <span class="stats-value" id="totalApplications">0</span>
+            </div>
+            <div class="streak-container">
+              <p id="streakText">You're on a 0-day streak! 🔥</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Streak Display -->
-      <div class="streak-container">
-        <p id="streakText">You're on a 0-day streak! 🔥</p>
+      <!-- Bottom Controls -->
+      <div class="bottom-controls">
+        <div class="settings">
+          <label for="dailyTarget">Daily Target:</label>
+          <input type="number" id="dailyTarget" min="1" placeholder="10" />
+          <button id="setTarget">Set</button>
+        </div>
+        <button id="openNotesBtn" class="notes-button">📝 Notes</button>
       </div>
 
-      <!-- Controls -->
-      <div class="controls">
-        <button id="incrementButton">+ Add Application</button>
-        <button id="resetButton" class="reset">Reset</button>
-      </div>
-
-      <!-- Settings Section -->
-      <div class="settings">
-        <label for="dailyTarget">Set Daily Target:</label>
-        <input type="number" id="dailyTarget" min="1" placeholder="10" />
-        <button id="setTarget">Set</button>
-      </div>
-
-      <button id="openNotesBtn" class="notes-button">📝 Notes</button>
-
-      <!--  notes modal -->
+      <!-- Notes Modal -->
       <div id="notesModal" class="notes-modal">
         <div class="notes-content">
           <textarea
             id="notesText"
-            placeholder="Enter your notes here!!"
+            placeholder="Enter your notes here..."
           ></textarea>
           <div class="notes-actions">
             <button id="saveNotesBtn">Save</button>
