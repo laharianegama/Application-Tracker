@@ -19,6 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveNotesBtn = document.getElementById("saveNotesBtn");
   const closeNotesBtn = document.getElementById("closeNotesBtn");
 
+  const confirmResetBtn = document.getElementById("confirmReset");
+  const cancelResetBtn = document.getElementById("cancelReset");
+
   let applicationCount = 0;
   let dailyTarget = 10;
   let streak = 0;
@@ -163,13 +166,19 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   resetButton.addEventListener("click", () => {
-    if (confirm("Are you sure you want to reset today's progress?")) {
-      applicationCount = 0;
-      chrome.storage.sync.set(
-        { applications: applicationCount },
-        updateProgress
-      );
-    }
+    confirmationModal.style.display = "block";
+  });
+
+  confirmResetBtn.addEventListener("click", () => {
+    applicationCount = 0;
+    chrome.storage.sync.set({ applications: applicationCount }, () => {
+      updateProgress();
+      confirmationModal.style.display = "none";
+    });
+  });
+
+  cancelResetBtn.addEventListener("click", () => {
+    confirmationModal.style.display = "none";
   });
 
   setTargetButton.addEventListener("click", () => {
@@ -201,6 +210,9 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("click", (event) => {
     if (event.target === notesModal) {
       notesModal.style.display = "none";
+    }
+    if (event.target === confirmationModal) {
+      confirmationModal.style.display = "none";
     }
   });
 
