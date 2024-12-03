@@ -87,6 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     if (progress >= 1) {
       progressCircle.classList.add("progress-complete");
+      if (applicationCount === dailyTarget) {
+        createConfetti();
+      }
     } else if (progress >= 0.8) {
       progressCircle.classList.add("progress-near-complete");
     }

@@ -8,7 +8,7 @@ function createConfetti() {
   for (let i = 0; i < confettiCount; i++) {
     const confetti = document.createElement("div");
     confetti.style.cssText = `
-        position: absolute;
+        position: fixed;
         width: 8px;
         height: 8px;
         background-color: ${colors[Math.floor(Math.random() * colors.length)]};
