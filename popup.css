@@ -7,12 +7,12 @@ body {
 }
 
 .popup-container {
-  max-width: 300px;
+  max-width: 500px;
   margin: auto;
 }
 
 h1 {
-  font-size: 18px;
+  font-size: 14px;
   color: #333;
   margin: 5px 0;
   font-weight: bold;
@@ -88,9 +88,9 @@ h1 {
 
 .quote-container {
   background: white;
-  padding: 10px;
+  padding: 8px;
   border-radius: 8px;
-  margin: 10px 0;
+  margin: 6px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
