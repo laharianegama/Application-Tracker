@@ -59,6 +59,49 @@ document.addEventListener("DOMContentLoaded", () => {
       quote: "Your time is limited, don't waste it living someone else's life.",
       author: "Steve Jobs",
     },
+    {
+      quote: "Believe you can and you're halfway there.",
+      author: "Theodore Roosevelt",
+    },
+    {
+      quote: "Opportunities don't happen, you create them.",
+      author: "Chris Grosser",
+    },
+    {
+      quote: "Everything you’ve ever wanted is on the other side of fear.",
+      author: "George Addair",
+    },
+    {
+      quote: "The only way to do great work is to love what you do.",
+      author: "Steve Jobs",
+    },
+    {
+      quote: "Start where you are. Use what you have. Do what you can.",
+      author: "Arthur Ashe",
+    },
+    {
+      quote: "Success doesn’t come to you, you go to it.",
+      author: "Marva Collins",
+    },
+    {
+      quote:
+        "It's not the load that breaks you down, it's the way you carry it.",
+      author: "Lou Holtz",
+    },
+    {
+      quote:
+        "The future belongs to those who believe in the beauty of their dreams.",
+      author: "Eleanor Roosevelt",
+    },
+    {
+      quote:
+        "I am not a product of my circumstances. I am a product of my decisions.",
+      author: "Stephen Covey",
+    },
+    {
+      quote: "What you do today can improve all your tomorrows.",
+      author: "Ralph Marston",
+    },
   ];
 
   function getQuoteOfTheDay() {
@@ -77,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (progress >= 0.5) {
       progressLabel.textContent = "Great job, you're halfway!🌓🌟";
     } else if (progress > 0) {
-      progressLabel.textContent = "Keep going!⚡";
+      progressLabel.textContent = "Keep going!🏃‍♂️⚡";
     } else {
       progressLabel.textContent = "Start applying! 🎬🌱";
     }
