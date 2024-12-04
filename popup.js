@@ -71,15 +71,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateProgressLabel(progress) {
     if (progress >= 1) {
-      progressLabel.textContent = "Goal achieved! 🎉";
+      progressLabel.textContent = "Daily target achieved!🏆🎉";
     } else if (progress >= 0.8) {
-      progressLabel.textContent = "Almost there!";
+      progressLabel.textContent = "Almost there! Keep pushing!🎯💪🏼";
     } else if (progress >= 0.5) {
-      progressLabel.textContent = "Halfway there!";
+      progressLabel.textContent = "Great job, you're halfway!🌓🌟";
     } else if (progress > 0) {
-      progressLabel.textContent = "Keep going!";
+      progressLabel.textContent = "Keep going!⚡";
     } else {
-      progressLabel.textContent = "Start applying!";
+      progressLabel.textContent = "Start applying! 🎬🌱";
     }
   }
 
