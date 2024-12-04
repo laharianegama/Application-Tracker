@@ -141,10 +141,16 @@ h1 {
 }
 
 .streak-container {
-  font-size: 13px;
-  color: #555;
-  font-weight: bold;
-  margin: 0;
+  background: linear-gradient(145deg, #fff9c4, #fff59d);
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.streak-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .streak-container p {
