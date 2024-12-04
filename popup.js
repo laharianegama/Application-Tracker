@@ -21,7 +21,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const confirmResetBtn = document.getElementById("confirmReset");
   const cancelResetBtn = document.getElementById("cancelReset");
+  
 
+  const networkingModal = document.getElementById('networkingModal');
+  const openNetworkingBtn = document.getElementById('openNetworkingBtn');
+  const closeNetworkingBtn = document.getElementById('closeNetworkingBtn');
+  const tabBtns = document.querySelectorAll('.tab-btn');
+
+  
   let applicationCount = 0;
   let dailyTarget = 10;
   let streak = 0;
@@ -230,6 +237,36 @@ document.addEventListener("DOMContentLoaded", () => {
       dailyTarget = newTarget;
       chrome.storage.sync.set({ dailyTarget }, updateProgress);
     }
+  });
+
+  // Networking modal controls
+  openNetworkingBtn.addEventListener('click', async () => {
+    networkingModal.style.display = 'block';
+    if (networkingManager) {
+      await networkingManager.refreshContactsList();
+      await networkingManager.refreshTemplatesList();
+    }
+  });
+
+  closeNetworkingBtn.addEventListener('click', () => {
+    networkingModal.style.display = 'none';
+  });
+
+  // Tab switching
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      btn.classList.add('active');
+      document.getElementById(`${btn.dataset.tab}-tab`).classList.add('active');
+
+      if (btn.dataset.tab === 'contacts' && networkingManager) {
+        await networkingManager.refreshContactsList();
+      } else if (btn.dataset.tab === 'templates' && networkingManager) {
+        await networkingManager.refreshTemplatesList();
+      }
+    });
   });
 
   openNotesBtn.addEventListener("click", () => {

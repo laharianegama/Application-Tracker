@@ -259,6 +259,9 @@ h1 {
   border: 1px solid #888;
   width: 75%;
   border-radius: 5px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
 }
 
 #notesText {
@@ -465,4 +468,246 @@ h1 {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.networking-button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.networking-button:hover {
+  background: #45a049;
+}
+
+.networking-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 15px;
+  position: sticky;
+  top: 0;
+  background: #fefefe;
+  z-index: 1;
+  padding: 5px 0;
+}
+
+.tab-btn {
+  padding: 8px 16px;
+  border: none;
+  background: #f1f1f1;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.tab-btn.active {
+  background: #4CAF50;
+  color: white;
+}
+
+.tab-content {
+  display: none;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 0 10px;
+  margin-bottom: 10px;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.add-btn {
+  position: sticky;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4caf50;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  z-index: 2;
+}
+
+.add-btn:hover {
+  background-color: #45a049;
+}
+
+#contactsList, #templatesList {
+  margin-bottom: 60px;
+}
+
+/* Toast Notification */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  z-index: 1000;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, 20px); }
+  15% { opacity: 1; transform: translate(-50%, 0); }
+  85% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -20px); }
+}
+
+/* Contact and Template Cards */
+.contact-card, .template-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 8px;
+  transition: box-shadow 0.2s ease;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  font-weight: 500;
+  color: #333;
+}
+
+.card-company {
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.card-role {
+  display: inline-block;
+  background: #e8f0fe;
+  color: #1a73e8;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-bottom: 4px;
+}
+
+.card-notes {
+  font-size: 13px;
+  color: #666;
+  margin-top: 8px;
+  white-space: pre-wrap;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.card-action {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.card-preview {
+  font-size: 13px;
+  color: #666;
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+
+/* Form Styles */
+.form-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 1000;
+  padding: 20px;
+}
+
+.form-content {
+  max-width: 100%;
+}
+
+.form-content h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.form-content input,
+.form-content select,
+.form-content textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.form-content textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.form-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto; /* Add scroll */
+  max-height: 100%;
+}
+
+.form-content {
+  max-width: 100%;
+  padding-bottom: 20px; /* Add padding at bottom */
+}
+
+/* Add styles for the tabs content */
+.tab-content {
+  max-height: 300px; /* Adjust based on your needs */
+  overflow-y: auto;
+  padding-right: 8px; /* For scroll bar */
+}
+
+#contactsList, #templatesList {
+  margin-bottom: 12px;
 }

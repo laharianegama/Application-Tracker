@@ -74,6 +74,7 @@
           <input type="number" id="dailyTarget" min="1" placeholder="10" />
           <button id="setTarget">Set</button>
         </div>
+        <button id="openNetworkingBtn" class="networking-button">👥 Networking</button>
         <button id="openNotesBtn" class="notes-button">📝 Notes</button>
       </div>
 
@@ -90,6 +91,73 @@
           </div>
         </div>
       </div>
+      <!-- Networking Modal -->
+      <div id="networkingModal" class="notes-modal">
+        <div class="notes-content">
+          <div class="networking-tabs">
+            <button class="tab-btn active" data-tab="contacts">Contacts</button>
+            <button class="tab-btn" data-tab="templates">Templates</button>
+          </div>
+          <div class="tab-content active" id="contacts-tab">
+            <div id="contactsList"></div>
+            <button id="addContactBtn" class="add-btn">+ Add Contact</button>
+          </div>
+          <div class="tab-content" id="templates-tab">
+            <div id="templatesList"></div>
+            <button id="addTemplateBtn" class="add-btn">+ Add Template</button>
+          </div>
+          <div class="notes-actions">
+            <button id="closeNetworkingBtn">Close</button>
+          </div>
+                <!-- Add Contact Form -->
+          <div id="addContactForm" class="form-overlay" style="display: none;">
+            <!-- Contact form content -->
+            <div class="form-content">
+              <h3>Add New Contact</h3>
+              <form id="contactForm">
+                <input type="text" id="contactName" placeholder="Name *" required>
+                <input type="text" id="contactCompany" placeholder="Company *" required>
+                <select id="contactRole">
+                  <option value="recruiter">Recruiter</option>
+                  <option value="interviewer">Interviewer</option>
+                  <option value="hiring-manager">Hiring Manager</option>
+                </select>
+                <input type="email" id="contactEmail" placeholder="Email">
+                <input type="url" id="contactLinkedIn" placeholder="LinkedIn URL">
+                <textarea id="contactNotes" placeholder="Notes"></textarea>
+                <div class="form-buttons">
+                  <button type="submit" class="save-btn">Save</button>
+                  <button type="button" class="cancel-btn" id="cancelContact">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Add Template Form -->
+          <div id="addTemplateForm" class="form-overlay" style="display: none;">
+            <!-- Template form content -->
+            <div class="form-content">
+              <h3>Add Email Template</h3>
+              <form id="templateForm">
+                <input type="text" id="templateName" placeholder="Template Name *" required>
+                <select id="templateType">
+                  <option value="initial">Initial Connection</option>
+                  <option value="thank-you">Thank You</option>
+                  <option value="follow-up">Follow-up</option>
+                </select>
+                <textarea id="templateContent" placeholder="Email Template Content *" required></textarea>
+                <div class="template-help">
+                  Available variables: {{name}}, {{company}}, {{role}}
+                </div>
+                <div class="form-buttons">
+                  <button type="submit" class="save-btn">Save</button>
+                  <button type="button" class="cancel-btn" id="cancelTemplate">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- Confirmation Modal -->
       <div id="confirmationModal" class="confirmation-modal">
         <div class="confirmation-content">
@@ -101,6 +169,7 @@
         </div>
       </div>
     </div>
+    <script src="networking.js"></script>
     <script src="popup.js"></script>
     <script src="confetti.js"></script>
   </body>
