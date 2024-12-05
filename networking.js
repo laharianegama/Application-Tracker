@@ -146,11 +146,8 @@ function createContactCard(contact) {
         }
     });
 
-    card.querySelector('.delete-contact').addEventListener('click', async () => {
-        if (confirm('Are you sure you want to delete this contact?')) {
-            await dbOperations.deleteContact(contact.id);
-            await refreshContactsList();
-        }
+    card.querySelector('.delete-contact').addEventListener('click', () => {
+        showDeleteConfirmation(contact, 'contact');
     });
 
     return card;
@@ -177,11 +174,8 @@ function createTemplateCard(template) {
         showToast('Template copied to clipboard!');
     });
 
-    card.querySelector('.delete-template').addEventListener('click', async () => {
-        if (confirm('Are you sure you want to delete this template?')) {
-            await dbOperations.deleteTemplate(template.id);
-            await refreshTemplatesList();
-        }
+    card.querySelector('.delete-template').addEventListener('click', () => {
+        showDeleteConfirmation(template, 'template');
     });
 
     return card;
@@ -193,6 +187,28 @@ function showToast(message) {
     toast.textContent = message;
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
+}
+
+// Delete confirmation modal functionality
+const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+const deleteConfirmText = document.getElementById('deleteConfirmText');
+const confirmDeleteBtn = document.getElementById('confirmDelete');
+const cancelDeleteBtn = document.getElementById('cancelDelete');
+
+let itemToDelete = null;
+let deleteType = null;
+
+function showDeleteConfirmation(item, type) {
+    itemToDelete = item;
+    deleteType = type;
+    deleteConfirmText.textContent = `Are you sure you want to delete this ${type}?`;
+    deleteConfirmModal.style.display = 'block';
+}
+
+function hideDeleteConfirmation() {
+    deleteConfirmModal.style.display = 'none';
+    itemToDelete = null;
+    deleteType = null;
 }
 
 // Refresh UI Functions
@@ -310,6 +326,27 @@ document.addEventListener('DOMContentLoaded', () => {
             refreshTemplatesList();
         } catch (error) {
             showToast('Error adding template: ' + error.message);
+        }
+    });
+
+    // Delete confirmation modal event listeners
+    confirmDeleteBtn.addEventListener('click', async () => {
+        if (deleteType === 'contact') {
+            await dbOperations.deleteContact(itemToDelete.id);
+            await refreshContactsList();
+        } else if (deleteType === 'template') {
+            await dbOperations.deleteTemplate(itemToDelete.id);
+            await refreshTemplatesList();
+        }
+        hideDeleteConfirmation();
+    });
+
+    cancelDeleteBtn.addEventListener('click', hideDeleteConfirmation);
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === deleteConfirmModal) {
+            hideDeleteConfirmation();
         }
     });
 });
