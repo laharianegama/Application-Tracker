@@ -100,14 +100,14 @@
           </div>
           <div class="tab-content active" id="contacts-tab">
             <div id="contactsList"></div>
-            <button id="addContactBtn" class="add-btn">+ Add Contact</button>
           </div>
           <div class="tab-content" id="templates-tab">
             <div id="templatesList"></div>
-            <button id="addTemplateBtn" class="add-btn">+ Add Template</button>
           </div>
           <div class="notes-actions">
-            <button id="closeNetworkingBtn">Close</button>
+            <button id="addContactBtn" class="action-btn">+Contact</button>
+            <button id="addTemplateBtn" class="action-btn">+Template</button>
+            <button id="closeNetworkingBtn" class="action-btn">Close</button>
           </div>
                 <!-- Add Contact Form -->
           <div id="addContactForm" class="form-overlay" style="display: none;">
@@ -121,6 +121,7 @@
                   <option value="recruiter">Recruiter</option>
                   <option value="interviewer">Interviewer</option>
                   <option value="hiring-manager">Hiring Manager</option>
+                  <option value="employee">Employee</option>
                 </select>
                 <input type="email" id="contactEmail" placeholder="Email">
                 <input type="url" id="contactLinkedIn" placeholder="LinkedIn URL">
@@ -147,7 +148,6 @@
                 </select>
                 <textarea id="templateContent" placeholder="Email Template Content *" required></textarea>
                 <div class="template-help">
-                  Available variables: {{name}}, {{company}}, {{role}}
                 </div>
                 <div class="form-buttons">
                   <button type="submit" class="save-btn">Save</button>
