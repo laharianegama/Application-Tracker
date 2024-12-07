@@ -48,6 +48,35 @@ const dbOperations = {
         });
     },
 
+    async updateTemplate(id, updatedTemplate) {
+        const db = await initDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(['templates'], 'readwrite');
+            const store = transaction.objectStore('templates');
+            
+            // First, get the existing template
+            const getRequest = store.get(id);
+            
+            getRequest.onsuccess = () => {
+                if (!getRequest.result) {
+                    reject(new Error('Template not found'));
+                    return;
+                }
+                
+                // Update the template while preserving its ID
+                const request = store.put({
+                    ...getRequest.result,  // Keep existing properties
+                    ...updatedTemplate,    // Override with updates
+                    id: id                 // Ensure ID remains the same
+                });
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            };
+            
+            getRequest.onerror = () => reject(getRequest.error);
+        });
+    },
     async getAllContacts() {
         const db = await initDB();
         return new Promise((resolve, reject) => {
@@ -118,35 +147,49 @@ function createContactCard(contact) {
     const card = document.createElement('div');
     card.className = 'contact-card';
     card.innerHTML = `
-        <div class="card-header">
-            <div class="card-title">${contact.name}</div>
+        <div class="card-content">
+            <div class="card-left">
+                <div class="card-title">${contact.name}</div>
+                <div class="card-details">
+                    ${contact.company ? `<span class="card-company">${contact.company}</span>` : ''}
+                    ${contact.role ? `<span class="card-role">${contact.role}</span>` : ''}
+                </div>
+                ${contact.notes ? `<div class="card-notes">${contact.notes}</div>` : ''}
+            </div>
             <div class="card-actions">
-                <button class="card-action copy-email" title="Copy Email">📧</button>
-                <button class="card-action copy-linkedin" title="Copy LinkedIn">👥</button>
-                <button class="card-action delete-contact" title="Delete">🗑️</button>
+                ${contact.email ? 
+                    `<button class="card-action-btn email-btn" title="Copy Email">
+                        <span class="icon">📧</span>
+                    </button>` : ''
+                }
+                ${contact.linkedIn ? 
+                    `<button class="card-action-btn linkedin-btn" title="Copy LinkedIn Connection Request">
+                        <span class="icon">👥</span>
+                    </button>` : ''
+                }
+                <button class="card-action-btn delete-btn" title="Delete Contact">
+                    <span class="icon">🗑️</span>
+                </button>
             </div>
         </div>
-        <div class="card-company">${contact.company}</div>
-        ${contact.role ? `<div class="card-role">${contact.role}</div>` : ''}
-        ${contact.notes ? `<div class="card-notes">${contact.notes}</div>` : ''}
     `;
 
     // Add event listeners
-    card.querySelector('.copy-email').addEventListener('click', () => {
-        if (contact.email) {
+    if (contact.email) {
+        card.querySelector('.email-btn').addEventListener('click', () => {
             navigator.clipboard.writeText(contact.email);
             showToast('Email copied to clipboard!');
-        }
-    });
+        });
+    }
 
-    card.querySelector('.copy-linkedin').addEventListener('click', () => {
-        if (contact.linkedin) {
-            navigator.clipboard.writeText(contact.linkedin);
+    if (contact.linkedIn) {
+        card.querySelector('.linkedin-btn').addEventListener('click', () => {
+            navigator.clipboard.writeText(contact.linkedIn);
             showToast('LinkedIn URL copied to clipboard!');
-        }
-    });
+        });
+    }
 
-    card.querySelector('.delete-contact').addEventListener('click', () => {
+    card.querySelector('.delete-btn').addEventListener('click', () => {
         showDeleteConfirmation(contact, 'contact');
     });
 
@@ -160,20 +203,46 @@ function createTemplateCard(template) {
         <div class="card-header">
             <div class="card-title">${template.name}</div>
             <div class="card-actions">
-                <button class="card-action copy-template" title="Copy Template">📋</button>
-                <button class="card-action delete-template" title="Delete">🗑️</button>
+                <button class="card-action-btn edit-template" title="Edit Template">✏️</button>
+                <button class="card-action-btn copy-template" title="Copy Template">📋</button>
+                <button class="card-action-btn delete-template" title="Delete">🗑️</button>
             </div>
         </div>
         <div class="card-type">${template.type}</div>
-        <div class="card-preview">${template.content.substring(0, 100)}...</div>
+        <div class="card-preview" title="${template.content}">${template.content.substring(0, 100)}${template.content.length > 100 ? '...' : ''}</div>
     `;
 
-    // Add event listeners
+    // Edit button
+    card.querySelector('.edit-template').addEventListener('click', () => {
+        const addTemplateForm = document.getElementById('addTemplateForm');
+        const templateForm = document.getElementById('templateForm');
+        const templateName = document.getElementById('templateName');
+        const templateType = document.getElementById('templateType');
+        const templateContent = document.getElementById('templateContent');
+        const submitBtn = templateForm.querySelector('button[type="submit"]');
+        
+        // Set editing state
+        window.editingTemplateId = template.id;
+        
+        // Pre-populate form
+        templateName.value = template.name;
+        templateType.value = template.type;
+        templateContent.value = template.content;
+        
+        // Change button text
+        submitBtn.textContent = 'Update Template';
+        
+        // Show form
+        addTemplateForm.style.display = 'block';
+    });
+
+    // Copy button
     card.querySelector('.copy-template').addEventListener('click', () => {
         navigator.clipboard.writeText(template.content);
         showToast('Template copied to clipboard!');
     });
 
+    // Delete button
     card.querySelector('.delete-template').addEventListener('click', () => {
         showDeleteConfirmation(template, 'template');
     });
@@ -263,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addContactForm = document.getElementById('addContactForm');
     const contactForm = document.getElementById('contactForm');
     const cancelContactBtn = document.getElementById('cancelContact');
-
+    
     addContactBtn.addEventListener('click', () => {
         addContactForm.style.display = 'block';
     });
@@ -300,14 +369,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const addTemplateForm = document.getElementById('addTemplateForm');
     const templateForm = document.getElementById('templateForm');
     const cancelTemplateBtn = document.getElementById('cancelTemplate');
+    let editingTemplateId = null; // Track if we're editing a template
 
     addTemplateBtn.addEventListener('click', () => {
+        editingTemplateId = null; // Reset editing state
+        templateForm.querySelector('button[type="submit"]').textContent = 'Add Template';
         addTemplateForm.style.display = 'block';
     });
 
     cancelTemplateBtn.addEventListener('click', () => {
+        editingTemplateId = null; // Reset editing state
         addTemplateForm.style.display = 'none';
         templateForm.reset();
+        templateForm.querySelector('button[type="submit"]').textContent = 'Add Template';
     });
 
     templateForm.addEventListener('submit', async (e) => {
@@ -317,15 +391,25 @@ document.addEventListener('DOMContentLoaded', () => {
             type: document.getElementById('templateType').value,
             content: document.getElementById('templateContent').value
         };
-
+    
         try {
-            await dbOperations.addTemplate(template);
-            showToast('Template added successfully!');
+            if (window.editingTemplateId) {
+                // Update existing template
+                await dbOperations.updateTemplate(window.editingTemplateId, template);
+                showToast('Template updated successfully!');
+            } else {
+                // Add new template
+                await dbOperations.addTemplate(template);
+                showToast('Template added successfully!');
+            }
             addTemplateForm.style.display = 'none';
             templateForm.reset();
+            templateForm.querySelector('button[type="submit"]').textContent = 'Add Template';
+            window.editingTemplateId = null; // Reset editing state
             refreshTemplatesList();
         } catch (error) {
-            showToast('Error adding template: ' + error.message);
+            showToast('Error: ' + error.message);
+            console.error('Template operation error:', error);
         }
     });
 
