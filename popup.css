@@ -89,6 +89,17 @@ h1 {
   font-size: 14px;
   color: #666;
 }
+.progress-low {
+  stroke: #f44336; /* Red for low progress (0-50%) */
+}
+
+.progress-medium {
+  stroke: #ff9800; /* Orange for medium progress (51-80%) */
+}
+
+.progress-high {
+  stroke: #4caf50; /* Green for high progress (81-100%) */
+}
 
 .quote-container {
   background: white;
@@ -517,6 +528,7 @@ h1 {
   align-items: center;
   gap: 4px;
 }
+
 
 .card-company::before {
   content: "🏢";
