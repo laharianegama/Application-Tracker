@@ -133,6 +133,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function checkAndResetDaily() {
+    const today = new Date().toISOString().split('T')[0];
+    chrome.storage.sync.get(['lastApplicationUpdateDate', 'applicationCount', 'dailyTarget', 'streak', 'targetMet'], (data) => {
+      if (data.lastApplicationUpdateDate !== today) {
+        // If yesterday's target was met, increment streak
+        if (data.targetMet) {
+          streak = (data.streak || 0) + 1;
+        } else {
+          streak = 0;
+        }
+        
+        // Reset for new day
+        applicationCount = 0;
+        chrome.storage.sync.set({
+          applicationCount,
+          lastApplicationUpdateDate: today,
+          streak,
+          targetMet: false
+        });
+        
+        progressCount.textContent = applicationCount;
+        updateProgress();
+        updateStreakText();
+        chrome.action.setBadgeText({ text: applicationCount.toString() });
+      } else {
+        // Same day - restore previous values
+        applicationCount = data.applicationCount || 0;
+        streak = data.streak || 0;
+      }
+    });
+  }
+
   function updateProgress() {
     const progress = Math.min(applicationCount / dailyTarget, 1);
     const circumference = 2 * Math.PI * 45; // Updated radius
@@ -141,17 +173,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Update progress circle appearance
     const progressCircle = document.querySelector(".progress-circle");
+    const progressFill = document.querySelector(".progress-circle-fill");
+    
+    // Remove all progress-related classes
     progressCircle.classList.remove(
       "progress-near-complete",
       "progress-complete"
     );
+    progressFill.classList.remove(
+      "progress-low",
+      "progress-medium",
+      "progress-high"
+    );
+
+    // Add appropriate class based on progress
     if (progress >= 1) {
       progressCircle.classList.add("progress-complete");
+      progressFill.classList.add("progress-high");
       if (applicationCount === dailyTarget) {
         createConfetti();
       }
     } else if (progress >= 0.8) {
       progressCircle.classList.add("progress-near-complete");
+      progressFill.classList.add("progress-high");
+    } else if (progress >= 0.5) {
+      progressFill.classList.add("progress-medium");
+    } else {
+      progressFill.classList.add("progress-low");
     }
 
     // Add animation
@@ -182,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.storage.sync.set({ streak, lastUpdatedDate });
     }
 
-    streakText.textContent = `You're on a ${streak}-day streak! 🔥`;
+    updateStreakText();
 
     // Update badge on the extension icon
     chrome.action.setBadgeText({ text: applicationCount.toString() });
@@ -203,16 +251,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function updateStreakText() {
+    if (streak > 0) {
+      streakText.textContent = `You're on a ${streak}-day streak! 🔥`;
+    } else {
+      streakText.textContent = `Start your streak today! 💪`;
+    }
+  }
+
   incrementButton.addEventListener("click", () => {
     applicationCount++;
     totalApplications++;
-    chrome.storage.sync.set(
-      {
-        applications: applicationCount,
-        totalApplications: totalApplications,
-      },
-      updateProgress
-    );
+    
+    // Check if daily target is met
+    const targetMet = applicationCount >= dailyTarget;
+    
+    chrome.storage.sync.set({
+      applicationCount,
+      totalApplications,
+      lastApplicationUpdateDate: new Date().toISOString().split('T')[0],
+      targetMet
+    });
+    
+    progressCount.textContent = applicationCount;
+    totalApplicationsDisplay.textContent = totalApplications;
+    updateProgress();
+    chrome.action.setBadgeText({ text: applicationCount.toString() });
   });
 
   resetButton.addEventListener("click", () => {
@@ -297,23 +361,25 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Initialize progress from storage
-  chrome.storage.sync.get(
-    [
-      "applications",
-      "dailyTarget",
-      "streak",
-      "lastUpdatedDate",
-      "totalApplications",
-    ],
-    (data) => {
-      applicationCount = data.applications || 0;
-      dailyTarget = data.dailyTarget || 10;
-      streak = data.streak || 0;
-      lastUpdatedDate = data.lastUpdatedDate || null;
-      totalApplications = data.totalApplications || 0;
-      updateProgress();
-      updateDailyQuote();
-      loadNotes();
-    }
-  );
+  chrome.storage.sync.get(['applicationCount', 'dailyTarget', 'streak', 'lastApplicationUpdateDate', 'totalApplications'], (data) => {
+    // Initialize values from storage
+    applicationCount = data.applicationCount || 0;
+    dailyTarget = data.dailyTarget || 10;
+    streak = data.streak || 0;
+    totalApplications = data.totalApplications || 0;
+
+    // Check for daily reset first
+    checkAndResetDaily();
+    
+    // Then update UI
+    updateProgress();
+    updateDailyQuote();
+    loadNotes();
+    
+    // Update displays
+    progressCount.textContent = applicationCount;
+    dailyTargetDisplay.textContent = dailyTarget;
+    totalApplicationsDisplay.textContent = totalApplications;
+    updateStreakText();
+    });
 });
