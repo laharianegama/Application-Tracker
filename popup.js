@@ -1,3 +1,8 @@
+// Add this helper function at the top of the file
+function countWords(text) {
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const progressCount = document.getElementById("progressCount");
   const dailyTargetDisplay = document.getElementById("dailyTargetDisplay");
@@ -336,13 +341,34 @@ document.addEventListener("DOMContentLoaded", () => {
   openNotesBtn.addEventListener("click", () => {
     notesModal.style.display = "block";
     loadNotes();
-  });
 
-  saveNotesBtn.addEventListener("click", () => {
-    const notes = notesText.value;
-    chrome.storage.sync.set({ notes }, () => {
-      console.log("Notes saved");
-      notesModal.style.display = "none";
+    const wordCountSpan = document.createElement('span');
+    wordCountSpan.style.fontSize = '12px';
+    wordCountSpan.style.color = '#666';
+    wordCountSpan.style.display = 'block';
+    wordCountSpan.style.marginTop = '4px';
+    notesText.parentNode.insertBefore(wordCountSpan, notesText.nextSibling);
+
+    notesText.addEventListener('input', function() {
+      const currentWords = countWords(this.value);
+      const remaining = 25 - currentWords;
+      wordCountSpan.textContent = `${remaining} words remaining`;
+      wordCountSpan.style.color = remaining < 0 ? '#f44336' : '#666';
+    });
+
+    saveNotesBtn.addEventListener("click", () => {
+      const notes = notesText.value;
+      const wordCount = countWords(notes);
+
+      if (wordCount > 25) {
+        alert('Please limit your notes to 25 words.');
+        return;
+      }
+
+      chrome.storage.sync.set({ notes }, () => {
+        console.log("Notes saved");
+        notesModal.style.display = "none";
+      });
     });
   });
 
@@ -381,5 +407,5 @@ document.addEventListener("DOMContentLoaded", () => {
     dailyTargetDisplay.textContent = dailyTarget;
     totalApplicationsDisplay.textContent = totalApplications;
     updateStreakText();
-    });
+  });
 });

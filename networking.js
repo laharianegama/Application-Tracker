@@ -34,16 +34,21 @@ function initDB() {
 const dbOperations = {
     // Contacts operations
     async addContact(contact) {
+        // Validate notes length before adding to database
+        if (contact.notes) {
+            const wordCount = countWords(contact.notes);
+            if (wordCount > 25) {
+                throw new Error('Notes cannot exceed 25 words.');
+            }
+        }
+
         const db = await initDB();
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(['contacts'], 'readwrite');
             const store = transaction.objectStore('contacts');
-            const request = store.add({
-                ...contact,
-                dateAdded: new Date().toISOString()
-            });
-            
-            request.onsuccess = () => resolve(request.result);
+            const request = store.add(contact);
+
+            request.onsuccess = () => resolve(contact);
             request.onerror = () => reject(request.error);
         });
     },
@@ -107,10 +112,7 @@ const dbOperations = {
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(['templates'], 'readwrite');
             const store = transaction.objectStore('templates');
-            const request = store.add({
-                ...template,
-                dateAdded: new Date().toISOString()
-            });
+            const request = store.add(template);
             
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
@@ -142,35 +144,56 @@ const dbOperations = {
     }
 };
 
+// Helper function to count words
+function countWords(text) {
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+}
+
+// Helper function to truncate text to a specified number of words
+function truncateToWords(str, numWords) {
+    if (!str) return '';
+    const words = str.trim().split(/\s+/);
+    if (words.length <= numWords) return str;
+    return words.slice(0, numWords).join(' ') + '...';
+}
+
 // UI Helper Functions
 function createContactCard(contact) {
     const card = document.createElement('div');
     card.className = 'contact-card';
+    
+    // Truncate notes to 25 words if they exist
+    const truncatedNotes = contact.notes ? truncateToWords(contact.notes, 25) : '';
+
     card.innerHTML = `
         <div class="card-content">
-            <div class="card-left">
-                <div class="card-title">${contact.name}</div>
-                <div class="card-details">
-                    ${contact.company ? `<span class="card-company">${contact.company}</span>` : ''}
-                    ${contact.role ? `<span class="card-role">${contact.role}</span>` : ''}
+            <div class="card-main">
+                <div class="card-left">
+                    <div class="card-header">
+                        <span class="card-title">${contact.name}</span>
+                        ${contact.role ? `<span class="card-role">${contact.role}</span>` : ''}
+                    </div>
+                    <div class="card-details">
+                        ${contact.company ? `<span class="card-company">${contact.company}</span>` : ''}
+                    </div>
                 </div>
-                ${contact.notes ? `<div class="card-notes">${contact.notes}</div>` : ''}
+                <div class="card-actions">
+                    ${contact.email ? 
+                        `<button class="card-action-btn email-btn" title="Copy Email">
+                            <span class="icon">📧</span>
+                        </button>` : ''
+                    }
+                    ${contact.linkedIn ? 
+                        `<button class="card-action-btn linkedin-btn" title="Copy LinkedIn Connection Request">
+                            <span class="icon">👥</span>
+                        </button>` : ''
+                    }
+                    <button class="card-action-btn delete-btn" title="Delete Contact">
+                        <span class="icon">🗑️</span>
+                    </button>
+                </div>
             </div>
-            <div class="card-actions">
-                ${contact.email ? 
-                    `<button class="card-action-btn email-btn" title="Copy Email">
-                        <span class="icon">📧</span>
-                    </button>` : ''
-                }
-                ${contact.linkedIn ? 
-                    `<button class="card-action-btn linkedin-btn" title="Copy LinkedIn Connection Request">
-                        <span class="icon">👥</span>
-                    </button>` : ''
-                }
-                <button class="card-action-btn delete-btn" title="Delete Contact">
-                    <span class="icon">🗑️</span>
-                </button>
-            </div>
+            ${truncatedNotes ? `<div class="card-notes" title="${contact.notes}">${truncatedNotes}</div>` : ''}
         </div>
     `;
 
@@ -202,14 +225,14 @@ function createTemplateCard(template) {
     card.innerHTML = `
         <div class="card-header">
             <div class="card-title">${template.name}</div>
-            <div class="card-actions">
-                <button class="card-action-btn edit-template" title="Edit Template">✏️</button>
-                <button class="card-action-btn copy-template" title="Copy Template">📋</button>
-                <button class="card-action-btn delete-template" title="Delete">🗑️</button>
-            </div>
         </div>
         <div class="card-type">${template.type}</div>
         <div class="card-preview" title="${template.content}">${template.content.substring(0, 100)}${template.content.length > 100 ? '...' : ''}</div>
+        <div class="card-actions">
+                <button class="card-action-btn edit-template" title="Edit Template">✏️</button>
+                <button class="card-action-btn copy-template" title="Copy Template">📋</button>
+                <button class="card-action-btn delete-template" title="Delete">🗑️</button>
+        </div>
     `;
 
     // Edit button
@@ -305,6 +328,88 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshContactsList();
     refreshTemplatesList();
 
+    const contactForm = document.getElementById('contactForm');
+    if (!contactForm) return;
+
+    const notesInput = document.getElementById('contactNotes');
+    if (!notesInput) return;
+
+    // Create word count display element
+    const wordCountDisplay = document.createElement('div');
+    wordCountDisplay.className = 'word-count-display';
+    wordCountDisplay.style.fontSize = '12px';
+    wordCountDisplay.style.color = '#666';
+    wordCountDisplay.style.marginTop = '4px';
+    wordCountDisplay.textContent = '25 words remaining';
+
+    // Add word count display after the notes input
+    if (notesInput.parentNode) {
+        notesInput.parentNode.insertBefore(wordCountDisplay, notesInput.nextSibling);
+    }
+
+    // Function to handle input and enforce word limit
+    function handleNotesInput(e) {
+        const words = notesInput.value.trim().split(/\s+/);
+        const wordCount = words.length;
+        
+        if (wordCount > 25) {
+            // Keep only the first 25 words
+            notesInput.value = words.slice(0, 25).join(' ');
+            wordCountDisplay.textContent = '0 words remaining';
+            wordCountDisplay.style.color = '#f44336';
+            showToast('Maximum word limit (25 words) reached');
+        } else {
+            const remaining = 25 - wordCount;
+            wordCountDisplay.textContent = `${remaining} words remaining`;
+            wordCountDisplay.style.color = '#666';
+        }
+    }
+
+    // Add input event listener
+    notesInput.addEventListener('input', handleNotesInput);
+    
+    // Add paste event listener to handle pasted content
+    notesInput.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pastedText = e.clipboardData.getData('text');
+        const words = pastedText.trim().split(/\s+/);
+        
+        if (words.length > 25) {
+            // If pasting would exceed limit, only paste first 25 words
+            notesInput.value = words.slice(0, 25).join(' ');
+            showToast('Pasted text truncated to 25 words');
+        } else {
+            notesInput.value = pastedText;
+        }
+        handleNotesInput();
+    });
+
+    // Handle form submission
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const contact = {
+            name: document.getElementById('contactName').value,
+            company: document.getElementById('contactCompany').value,
+            role: document.getElementById('contactRole').value,
+            email: document.getElementById('contactEmail').value,
+            linkedIn: document.getElementById('contactLinkedIn').value,
+            notes: notesInput.value.trim()
+        };
+
+        try {
+            await dbOperations.addContact(contact);
+            showToast('Contact added successfully!');
+            addContactForm.style.display = 'none';
+            contactForm.reset();
+            wordCountDisplay.textContent = '25 words remaining';
+            wordCountDisplay.style.color = '#666';
+            refreshContactsList();
+        } catch (error) {
+            showToast('Error adding contact: ' + error.message);
+        }
+    });
+
     // Tab Switching Logic
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -330,7 +435,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add Contact Form Handlers
     const addContactBtn = document.getElementById('addContactBtn');
     const addContactForm = document.getElementById('addContactForm');
-    const contactForm = document.getElementById('contactForm');
     const cancelContactBtn = document.getElementById('cancelContact');
     
     addContactBtn.addEventListener('click', () => {
@@ -340,28 +444,6 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelContactBtn.addEventListener('click', () => {
         addContactForm.style.display = 'none';
         contactForm.reset();
-    });
-
-    contactForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const contact = {
-            name: document.getElementById('contactName').value,
-            company: document.getElementById('contactCompany').value,
-            role: document.getElementById('contactRole').value,
-            email: document.getElementById('contactEmail').value,
-            linkedIn: document.getElementById('contactLinkedIn').value,
-            notes: document.getElementById('contactNotes').value
-        };
-
-        try {
-            await dbOperations.addContact(contact);
-            showToast('Contact added successfully!');
-            addContactForm.style.display = 'none';
-            contactForm.reset();
-            refreshContactsList();
-        } catch (error) {
-            showToast('Error adding contact: ' + error.message);
-        }
     });
 
     // Add Template Form Handlers
