@@ -3,6 +3,53 @@ function countWords(text) {
     return text.trim().split(/\s+/).filter(word => word.length > 0).length;
 }
 
+// Helper function to get start of day timestamp in user's timezone
+function getStartOfDay(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
+
+// Helper function to check if two dates are the same day in user's timezone
+function isSameDay(date1, date2) {
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  return d1.getFullYear() === d2.getFullYear() &&
+         d1.getMonth() === d2.getMonth() &&
+         d1.getDate() === d2.getDate();
+}
+
+// Helper function to check and handle day change
+function handleDayChange(data) {
+  const today = new Date();
+  const lastUpdate = data.lastApplicationUpdateDate ? 
+    new Date(data.lastApplicationUpdateDate) : 
+    null;
+    
+  if (!lastUpdate || !isSameDay(lastUpdate, today)) {
+    // New day - reset application count
+    applicationCount = 0;
+    // Update streak based on yesterday's performance
+    if (data.targetMet) {
+      streak = (data.streak || 0) + 1;
+    } else {
+      streak = 0;
+    }
+    // Save the new state
+    chrome.storage.sync.set({
+      applicationCount: 0,
+      lastApplicationUpdateDate: today.toISOString(),
+      streak,
+      targetMet: false
+    });
+    return true;
+  }
+  // Same day - restore previous values
+  applicationCount = data.applicationCount || 0;
+  streak = data.streak || 0;
+  return false;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const progressCount = document.getElementById("progressCount");
   const dailyTargetDisplay = document.getElementById("dailyTargetDisplay");
@@ -37,8 +84,42 @@ document.addEventListener("DOMContentLoaded", () => {
   let applicationCount = 0;
   let dailyTarget = 10;
   let streak = 0;
-  let lastUpdatedDate = null;
   let totalApplications = 0;
+
+  // Initialize state from storage
+  function initializeState() {
+    chrome.storage.sync.get(
+      ['applicationCount', 'dailyTarget', 'streak', 'totalApplications', 'lastApplicationUpdateDate', 'targetMet'],
+      (data) => {
+        try {
+          // Handle day change first
+          handleDayChange(data);
+          
+          // Update local state
+          applicationCount = data.applicationCount || 0;
+          dailyTarget = data.dailyTarget || 10;
+          streak = data.streak || 0;
+          totalApplications = data.totalApplications || 0;
+          
+          // Update UI
+          updateUI();
+        } catch (error) {
+          console.error('Error initializing state:', error);
+        }
+      }
+    );
+  }
+
+  // Update all UI elements
+  function updateUI() {
+    progressCount.textContent = applicationCount;
+    dailyTargetDisplay.textContent = dailyTarget;
+    totalApplicationsDisplay.textContent = totalApplications;
+    updateProgress();
+    updateStreakText();
+    updateDailyQuote();
+    chrome.action.setBadgeText({ text: applicationCount.toString() });
+  }
 
   const quotes = [
     {
@@ -138,38 +219,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function checkAndResetDaily() {
-    const today = new Date().toISOString().split('T')[0];
-    chrome.storage.sync.get(['lastApplicationUpdateDate', 'applicationCount', 'dailyTarget', 'streak', 'targetMet'], (data) => {
-      if (data.lastApplicationUpdateDate !== today) {
-        // If yesterday's target was met, increment streak
-        if (data.targetMet) {
-          streak = (data.streak || 0) + 1;
-        } else {
-          streak = 0;
-        }
-        
-        // Reset for new day
-        applicationCount = 0;
-        chrome.storage.sync.set({
-          applicationCount,
-          lastApplicationUpdateDate: today,
-          streak,
-          targetMet: false
-        });
-        
-        progressCount.textContent = applicationCount;
-        updateProgress();
-        updateStreakText();
-        chrome.action.setBadgeText({ text: applicationCount.toString() });
-      } else {
-        // Same day - restore previous values
-        applicationCount = data.applicationCount || 0;
-        streak = data.streak || 0;
-      }
-    });
-  }
-
   function updateProgress() {
     const progress = Math.min(applicationCount / dailyTarget, 1);
     const circumference = 2 * Math.PI * 45; // Updated radius
@@ -216,25 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
     totalApplicationsDisplay.textContent = totalApplications;
     updateProgressLabel(progress);
 
-    // Update streak with proper handling of missed days
-    const today = new Date().toISOString().split("T")[0];
-    const yesterday = new Date(Date.now() - 86400000)
-      .toISOString()
-      .split("T")[0];
-
-    if (applicationCount >= dailyTarget) {
-      if (lastUpdatedDate === yesterday) {
-        streak++;
-      } else if (lastUpdatedDate !== today) {
-        streak = 1;
-      }
-      lastUpdatedDate = today;
-      chrome.storage.sync.set({ streak, lastUpdatedDate });
-    } else if (lastUpdatedDate !== today && lastUpdatedDate !== yesterday) {
-      streak = 0;
-      chrome.storage.sync.set({ streak, lastUpdatedDate });
-    }
-
+    // Update streak text
     updateStreakText();
 
     // Update badge on the extension icon
@@ -265,23 +296,32 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   incrementButton.addEventListener("click", () => {
-    applicationCount++;
-    totalApplications++;
-    
-    // Check if daily target is met
-    const targetMet = applicationCount >= dailyTarget;
-    
-    chrome.storage.sync.set({
-      applicationCount,
-      totalApplications,
-      lastApplicationUpdateDate: new Date().toISOString().split('T')[0],
-      targetMet
+    chrome.storage.sync.get(['lastApplicationUpdateDate', 'applicationCount', 'streak', 'targetMet', 'totalApplications'], (data) => {
+      try {
+        // Check for day change first
+        handleDayChange(data);
+        
+        // Now increment the count
+        applicationCount++;
+        totalApplications = (data.totalApplications || 0) + 1;
+        
+        // Check if daily target is met
+        const targetMet = applicationCount >= dailyTarget;
+        
+        // Save the updated state
+        chrome.storage.sync.set({
+          applicationCount,
+          totalApplications,
+          lastApplicationUpdateDate: getStartOfDay(new Date()),
+          targetMet
+        }, () => {
+          // Update UI after successful save
+          updateUI();
+        });
+      } catch (error) {
+        console.error('Error incrementing count:', error);
+      }
     });
-    
-    progressCount.textContent = applicationCount;
-    totalApplicationsDisplay.textContent = totalApplications;
-    updateProgress();
-    chrome.action.setBadgeText({ text: applicationCount.toString() });
   });
 
   resetButton.addEventListener("click", () => {
@@ -289,11 +329,19 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   confirmResetBtn.addEventListener("click", () => {
-    applicationCount = 0;
-    chrome.storage.sync.set({ applications: applicationCount }, () => {
-      updateProgress();
-      confirmationModal.style.display = "none";
-    });
+    try {
+      applicationCount = 0;
+      chrome.storage.sync.set({ 
+        applicationCount: 0,
+        lastApplicationUpdateDate: new Date().toISOString(),
+        targetMet: false
+      }, () => {
+        updateUI();
+        confirmationModal.style.display = "none";
+      });
+    } catch (error) {
+      console.error('Error resetting count:', error);
+    }
   });
 
   cancelResetBtn.addEventListener("click", () => {
@@ -386,26 +434,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initialize progress from storage
-  chrome.storage.sync.get(['applicationCount', 'dailyTarget', 'streak', 'lastApplicationUpdateDate', 'totalApplications'], (data) => {
-    // Initialize values from storage
-    applicationCount = data.applicationCount || 0;
-    dailyTarget = data.dailyTarget || 10;
-    streak = data.streak || 0;
-    totalApplications = data.totalApplications || 0;
-
-    // Check for daily reset first
-    checkAndResetDaily();
-    
-    // Then update UI
-    updateProgress();
-    updateDailyQuote();
-    loadNotes();
-    
-    // Update displays
-    progressCount.textContent = applicationCount;
-    dailyTargetDisplay.textContent = dailyTarget;
-    totalApplicationsDisplay.textContent = totalApplications;
-    updateStreakText();
-  });
+  // Initialize on popup open
+  initializeState();
 });

@@ -883,3 +883,25 @@ textarea[name="notes"] {
 textarea[name="notes"].error {
   border-color: #f44336;
 }
+
+/* Confetti Animation */
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  transform-origin: center;
+  animation: confetti-fall linear forwards;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(1000%) rotate(720deg);
+    opacity: 0;
+  }
+}
