@@ -399,7 +399,7 @@ h1 {
 }
 
 .networking-button {
-  background: #4CAF50;
+  background: #4caf50;
   color: white;
   border: none;
   padding: 8px 12px;
@@ -435,7 +435,7 @@ h1 {
 }
 
 .tab-btn.active {
-  background: #4CAF50;
+  background: #4caf50;
   color: white;
 }
 
@@ -470,7 +470,8 @@ h1 {
   background-color: #45a049;
 }
 
-#contactsList, #templatesList {
+#contactsList,
+#templatesList {
   margin-bottom: 60px;
 }
 
@@ -490,10 +491,22 @@ h1 {
 }
 
 @keyframes fadeInOut {
-  0% { opacity: 0; transform: translate(-50%, 20px); }
-  15% { opacity: 1; transform: translate(-50%, 0); }
-  85% { opacity: 1; transform: translate(-50%, 0); }
-  100% { opacity: 0; transform: translate(-50%, -20px); }
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  85% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
 }
 
 /* Contact and Template Cards */
@@ -508,7 +521,7 @@ h1 {
 .card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: right;
 }
 
 .card-actions {
@@ -629,7 +642,7 @@ h1 {
   background: #e8f0fe;
   color: #1a73e8;
   font-size: 11px;
-  padding: 2px 8px;
+  padding: 4px 8px;
   border-radius: 12px;
   margin-left: auto;
   white-space: nowrap;
@@ -679,7 +692,7 @@ h1 {
   cursor: help;
 }
 
-.card-type{
+.card-type {
   background-color: #b5d3f0;
 }
 
@@ -803,7 +816,8 @@ h1 {
   padding-right: 8px; /* For scroll bar */
 }
 
-#contactsList, #templatesList {
+#contactsList,
+#templatesList {
   margin-bottom: 4px;
 }
 
