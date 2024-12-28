@@ -627,7 +627,7 @@ h1 {
 .card-role {
   display: block;
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 8 px;
   font-weight: 400;
   color: #5f6368;
   background: #f8f9fa;
@@ -639,7 +639,7 @@ h1 {
 .card-company {
   display: block;
   margin-top: 4px;
-  font-size: 8px;
+  font-size: 10 px;
   color: #5f6368;
 }
 
