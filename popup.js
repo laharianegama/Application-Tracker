@@ -1,6 +1,9 @@
 // Add this helper function at the top of the file
 function countWords(text) {
-    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+  return text
+    .trim()
+    .split(/\s+/)
+    .filter((word) => word.length > 0).length;
 }
 
 // Helper function to get start of day timestamp in user's timezone
@@ -14,18 +17,20 @@ function getStartOfDay(date) {
 function isSameDay(date1, date2) {
   const d1 = new Date(date1);
   const d2 = new Date(date2);
-  return d1.getFullYear() === d2.getFullYear() &&
-         d1.getMonth() === d2.getMonth() &&
-         d1.getDate() === d2.getDate();
+  return (
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate()
+  );
 }
 
 // Helper function to check and handle day change
 function handleDayChange(data) {
   const today = new Date();
-  const lastUpdate = data.lastApplicationUpdateDate ? 
-    new Date(data.lastApplicationUpdateDate) : 
-    null;
-    
+  const lastUpdate = data.lastApplicationUpdateDate
+    ? new Date(data.lastApplicationUpdateDate)
+    : null;
+
   if (!lastUpdate || !isSameDay(lastUpdate, today)) {
     // New day - reset application count
     applicationCount = 0;
@@ -40,7 +45,7 @@ function handleDayChange(data) {
       applicationCount: 0,
       lastApplicationUpdateDate: today.toISOString(),
       streak,
-      targetMet: false
+      targetMet: false,
     });
     return true;
   }
@@ -55,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const dailyTargetDisplay = document.getElementById("dailyTargetDisplay");
   const streakText = document.getElementById("streakText");
   const incrementButton = document.getElementById("incrementButton");
-  const resetButton = document.getElementById("resetButton");
+  // const resetButton = document.getElementById("resetButton");
   const dailyTargetInput = document.getElementById("dailyTarget");
   const setTargetButton = document.getElementById("setTarget");
   const progressCircleFill = document.querySelector(".progress-circle-fill");
@@ -73,14 +78,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const confirmResetBtn = document.getElementById("confirmReset");
   const cancelResetBtn = document.getElementById("cancelReset");
-  
 
-  const networkingModal = document.getElementById('networkingModal');
-  const openNetworkingBtn = document.getElementById('openNetworkingBtn');
-  const closeNetworkingBtn = document.getElementById('closeNetworkingBtn');
-  const tabBtns = document.querySelectorAll('.tab-btn');
+  const networkingModal = document.getElementById("networkingModal");
+  const openNetworkingBtn = document.getElementById("openNetworkingBtn");
+  const closeNetworkingBtn = document.getElementById("closeNetworkingBtn");
+  const tabBtns = document.querySelectorAll(".tab-btn");
 
-  
   let applicationCount = 0;
   let dailyTarget = 10;
   let streak = 0;
@@ -89,22 +92,29 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize state from storage
   function initializeState() {
     chrome.storage.sync.get(
-      ['applicationCount', 'dailyTarget', 'streak', 'totalApplications', 'lastApplicationUpdateDate', 'targetMet'],
+      [
+        "applicationCount",
+        "dailyTarget",
+        "streak",
+        "totalApplications",
+        "lastApplicationUpdateDate",
+        "targetMet",
+      ],
       (data) => {
         try {
           // Handle day change first
           handleDayChange(data);
-          
+
           // Update local state
           applicationCount = data.applicationCount || 0;
           dailyTarget = data.dailyTarget || 10;
           streak = data.streak || 0;
           totalApplications = data.totalApplications || 0;
-          
+
           // Update UI
           updateUI();
         } catch (error) {
-          console.error('Error initializing state:', error);
+          console.error("Error initializing state:", error);
         }
       }
     );
@@ -207,15 +217,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateProgressLabel(progress) {
     if (progress >= 1) {
-      progressLabel.textContent = "Daily target achieved!🏆🎉";
+      progressLabel.textContent = "Daily target achieved!🏆🎯🎉";
     } else if (progress >= 0.8) {
-      progressLabel.textContent = "Almost there! Keep pushing!🎯💪🏼";
+      progressLabel.textContent = "Almost there! Keep pushing!💪🏼";
     } else if (progress >= 0.5) {
       progressLabel.textContent = "Great job, you're halfway!🌓🌟";
     } else if (progress > 0) {
-      progressLabel.textContent = "Keep going!🏃‍♂️⚡";
+      progressLabel.textContent = "Let's do this, YOU GOT THIS!🏃‍♂️";
     } else {
-      progressLabel.textContent = "Start applying! 🎬🌱";
+      progressLabel.textContent = "Time to Start applying!🎬🌱";
     }
   }
 
@@ -228,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update progress circle appearance
     const progressCircle = document.querySelector(".progress-circle");
     const progressFill = document.querySelector(".progress-circle-fill");
-    
+
     // Remove all progress-related classes
     progressCircle.classList.remove(
       "progress-near-complete",
@@ -296,51 +306,66 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   incrementButton.addEventListener("click", () => {
-    chrome.storage.sync.get(['lastApplicationUpdateDate', 'applicationCount', 'streak', 'targetMet', 'totalApplications'], (data) => {
-      try {
-        // Check for day change first
-        handleDayChange(data);
-        
-        // Now increment the count
-        applicationCount++;
-        totalApplications = (data.totalApplications || 0) + 1;
-        
-        // Check if daily target is met
-        const targetMet = applicationCount >= dailyTarget;
-        
-        // Save the updated state
-        chrome.storage.sync.set({
-          applicationCount,
-          totalApplications,
-          lastApplicationUpdateDate: getStartOfDay(new Date()),
-          targetMet
-        }, () => {
-          // Update UI after successful save
-          updateUI();
-        });
-      } catch (error) {
-        console.error('Error incrementing count:', error);
+    chrome.storage.sync.get(
+      [
+        "lastApplicationUpdateDate",
+        "applicationCount",
+        "streak",
+        "targetMet",
+        "totalApplications",
+      ],
+      (data) => {
+        try {
+          // Check for day change first
+          handleDayChange(data);
+
+          // Now increment the count
+          applicationCount++;
+          totalApplications = (data.totalApplications || 0) + 1;
+
+          // Check if daily target is met
+          const targetMet = applicationCount >= dailyTarget;
+
+          // Save the updated state
+          chrome.storage.sync.set(
+            {
+              applicationCount,
+              totalApplications,
+              lastApplicationUpdateDate: getStartOfDay(new Date()),
+              targetMet,
+            },
+            () => {
+              // Update UI after successful save
+              updateUI();
+            }
+          );
+        } catch (error) {
+          console.error("Error incrementing count:", error);
+        }
       }
-    });
+    );
   });
 
-  resetButton.addEventListener("click", () => {
-    confirmationModal.style.display = "block";
-  });
+  // resetButton.addEventListener("click", () => {
+  //   confirmationModal.style.display = "block";
+  // });
 
   confirmResetBtn.addEventListener("click", () => {
     try {
       applicationCount = 0;
-      chrome.storage.sync.set({ 
-        applicationCount: 0,
-        lastApplicationUpdateDate: new Date().toISOString(),
-        targetMet: false
-      }, () => {
-        updateUI();
-        confirmationModal.style.display = "none";
-      });
+      chrome.storage.sync.set(
+        {
+          applicationCount: 0,
+          lastApplicationUpdateDate: new Date().toISOString(),
+          targetMet: false,
+        },
+        () => {
+          updateUI();
+          confirmationModal.style.display = "none";
+        }
+      );
     } catch (error) {
-      console.error('Error resetting count:', error);
+      console.error("Error resetting count:", error);
     }
   });
 
@@ -357,30 +382,32 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Networking modal controls
-  openNetworkingBtn.addEventListener('click', async () => {
-    networkingModal.style.display = 'block';
+  openNetworkingBtn.addEventListener("click", async () => {
+    networkingModal.style.display = "block";
     if (networkingManager) {
       await networkingManager.refreshContactsList();
       await networkingManager.refreshTemplatesList();
     }
   });
 
-  closeNetworkingBtn.addEventListener('click', () => {
-    networkingModal.style.display = 'none';
+  closeNetworkingBtn.addEventListener("click", () => {
+    networkingModal.style.display = "none";
   });
 
   // Tab switching
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', async () => {
-      tabBtns.forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      
-      btn.classList.add('active');
-      document.getElementById(`${btn.dataset.tab}-tab`).classList.add('active');
+  tabBtns.forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      tabBtns.forEach((b) => b.classList.remove("active"));
+      document
+        .querySelectorAll(".tab-content")
+        .forEach((c) => c.classList.remove("active"));
 
-      if (btn.dataset.tab === 'contacts' && networkingManager) {
+      btn.classList.add("active");
+      document.getElementById(`${btn.dataset.tab}-tab`).classList.add("active");
+
+      if (btn.dataset.tab === "contacts" && networkingManager) {
         await networkingManager.refreshContactsList();
-      } else if (btn.dataset.tab === 'templates' && networkingManager) {
+      } else if (btn.dataset.tab === "templates" && networkingManager) {
         await networkingManager.refreshTemplatesList();
       }
     });
@@ -390,18 +417,18 @@ document.addEventListener("DOMContentLoaded", () => {
     notesModal.style.display = "block";
     loadNotes();
 
-    const wordCountSpan = document.createElement('span');
-    wordCountSpan.style.fontSize = '12px';
-    wordCountSpan.style.color = '#666';
-    wordCountSpan.style.display = 'block';
-    wordCountSpan.style.marginTop = '4px';
+    const wordCountSpan = document.createElement("span");
+    wordCountSpan.style.fontSize = "12px";
+    wordCountSpan.style.color = "#666";
+    wordCountSpan.style.display = "block";
+    wordCountSpan.style.marginTop = "4px";
     notesText.parentNode.insertBefore(wordCountSpan, notesText.nextSibling);
 
-    notesText.addEventListener('input', function() {
+    notesText.addEventListener("input", function () {
       const currentWords = countWords(this.value);
       const remaining = 25 - currentWords;
       wordCountSpan.textContent = `${remaining} words remaining`;
-      wordCountSpan.style.color = remaining < 0 ? '#f44336' : '#666';
+      wordCountSpan.style.color = remaining < 0 ? "#f44336" : "#666";
     });
 
     saveNotesBtn.addEventListener("click", () => {
@@ -409,7 +436,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const wordCount = countWords(notes);
 
       if (wordCount > 25) {
-        alert('Please limit your notes to 25 words.');
+        alert("Please limit your notes to 25 words.");
         return;
       }
 

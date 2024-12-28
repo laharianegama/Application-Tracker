@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Job Application Tracker",
+  "name": "ApplyForge- Job Application Tracker",
   "version": "1.0",
-  "description": "Manually track job applications and monitor your progress toward daily goals.",
+  "description": "Motivational job application tracking with daily goals and networking features.",
   "permissions": ["storage", "activeTab", "scripting"],
   "background": {
     "service_worker": "background.js"
@@ -10,9 +10,9 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "assets/extensionIcon.png",
-      "48": "assets/extensionIcon.png",
-      "128": "assets/extensionIcon.png"
+      "16": "assets/job-tracker-icon-2.png",
+      "48": "assets/job-tracker-icon-2.png",
+      "128": "assets/job-tracker-icon-2.png"
     }
   }
 }
