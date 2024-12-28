@@ -416,34 +416,19 @@ document.addEventListener("DOMContentLoaded", () => {
   openNotesBtn.addEventListener("click", () => {
     notesModal.style.display = "block";
     loadNotes();
+  });
 
-    const wordCountSpan = document.createElement("span");
-    wordCountSpan.style.fontSize = "12px";
-    wordCountSpan.style.color = "#666";
-    wordCountSpan.style.display = "block";
-    wordCountSpan.style.marginTop = "4px";
-    notesText.parentNode.insertBefore(wordCountSpan, notesText.nextSibling);
-
-    notesText.addEventListener("input", function () {
-      const currentWords = countWords(this.value);
-      const remaining = 25 - currentWords;
-      wordCountSpan.textContent = `${remaining} words remaining`;
-      wordCountSpan.style.color = remaining < 0 ? "#f44336" : "#666";
+  function loadNotes() {
+    chrome.storage.sync.get(["notes"], (data) => {
+      notesText.value = data.notes || "";
     });
+  }
 
-    saveNotesBtn.addEventListener("click", () => {
-      const notes = notesText.value;
-      const wordCount = countWords(notes);
-
-      if (wordCount > 25) {
-        alert("Please limit your notes to 25 words.");
-        return;
-      }
-
-      chrome.storage.sync.set({ notes }, () => {
-        console.log("Notes saved");
-        notesModal.style.display = "none";
-      });
+  saveNotesBtn.addEventListener("click", () => {
+    const notes = notesText.value;
+    chrome.storage.sync.set({ notes }, () => {
+      console.log("Notes saved");
+      notesModal.style.display = "none";
     });
   });
 
@@ -451,7 +436,7 @@ document.addEventListener("DOMContentLoaded", () => {
     notesModal.style.display = "none";
   });
 
-  // Close the modal if the user clicks outside of it
+  // Close modal on outside click
   window.addEventListener("click", (event) => {
     if (event.target === notesModal) {
       notesModal.style.display = "none";
