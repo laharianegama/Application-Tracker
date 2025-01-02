@@ -217,15 +217,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateProgressLabel(progress) {
     if (progress >= 1) {
-      progressLabel.textContent = "Daily target achieved!🏆🎯🎉";
+      progressLabel.textContent = "Daily Target Achieved!🏆🎯🎉";
     } else if (progress >= 0.8) {
-      progressLabel.textContent = "Almost there! Keep pushing!💪🏼";
+      progressLabel.textContent = "Almost there! Keep Pushing!💪🏼";
     } else if (progress >= 0.5) {
-      progressLabel.textContent = "Great job, you're halfway!🌓🌟";
+      progressLabel.textContent = "Great Job, you're Halfway!🌓🌟";
     } else if (progress > 0) {
       progressLabel.textContent = "Let's do this, YOU GOT THIS!🏃‍♂️";
     } else {
-      progressLabel.textContent = "Time to Start applying!🎬🌱";
+      progressLabel.textContent = "Time to Start Applying!🎬🌟🌱";
     }
   }
 

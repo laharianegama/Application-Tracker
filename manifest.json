@@ -3,7 +3,7 @@
   "name": "ApplyForge- Job Application Tracker",
   "version": "1.0",
   "description": "Motivational job application tracking with daily goals and networking features.",
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": ["storage", "activeTab"],
   "background": {
     "service_worker": "background.js"
   },
